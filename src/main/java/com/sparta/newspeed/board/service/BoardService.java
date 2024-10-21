@@ -1,12 +1,14 @@
 package com.sparta.newspeed.board.service;
 
-import com.sparta.newspeed.board.dto.BoardRequestDto;
 import com.sparta.newspeed.board.dto.BoardResponseDto;
+import com.sparta.newspeed.board.dto.CreateBoardRequestDto;
+import com.sparta.newspeed.board.dto.CreateBoardResponseDto;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
+import com.sparta.newspeed.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.sparta.newspeed.common.exception.ResourceNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,9 +17,32 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
 
+    @Transactional
+    public CreateBoardResponseDto createBoard(CreateBoardRequestDto reqDto) {
+        // 임시 가짜 유저 엔티티 생성
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("하하하");
+        user.setPassword("1234");
+        user.setEmail("asdf@gmail.com");
+        // 임시
+
+        Board board = new Board(
+                user,
+                reqDto.getTitle(),
+                reqDto.getContent()
+        );
+        boardRepository.save(board);
+
+        return new CreateBoardResponseDto("201", "게시물 생성 완료", user.getId());
+    }
+
     public List<BoardResponseDto> getBoardById(Long id) {
         List<Board> boards = boardRepository.findAllById(id);
         return boards.stream()
                 .map(BoardResponseDto::new).toList();
     }
+
+
+
 }
