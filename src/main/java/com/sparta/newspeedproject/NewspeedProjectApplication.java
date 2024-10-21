@@ -1,13 +1,13 @@
-package com.sparta.newspeedproject1;
+package com.sparta.newspeedproject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class NewspeedProject1Application {
+public class NewspeedProjectApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(NewspeedProject1Application.class, args);
+        SpringApplication.run(NewspeedProjectApplication.class, args);
     }
 
 }
