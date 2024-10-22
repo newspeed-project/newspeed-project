@@ -36,17 +36,15 @@ public class BoardService {
         return new CreateBoardResponseDto("201", "게시물 생성 완료", board.getId());
     }
 
-    public BoardResponseDto getBoardById(Long id) {
+    public ReadBoardResponseDto getBoardById(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다."));
-        return new BoardResponseDto("201", "특정 게시물 조회 완료", board);
+        return new ReadBoardResponseDto("200", "특정 게시물 조회 완료", board);
     }
 
-    public List<BoardResponseDto> getAllBoards() {
+    public ReadAllBoardResponseDto getAllBoards() {
         List<Board> boards = boardRepository.findAll();
-        return boards.stream()
-                .map(board -> new BoardResponseDto("201", "전체 게시물 조회 완료", board))
-                .toList();
+        return new ReadAllBoardResponseDto("200", "전체 게시물 조회 완료", boards);
     }
 
     @Transactional
