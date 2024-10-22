@@ -38,20 +38,11 @@ public class User extends TimeStamped {
     public UserRole getRole() {
         return null;
     }
-
-    public void setEmail(String email) {
+    public void signup(String email, String password, String username, UserRole role) {
         this.email = email;
-    }
-
-    public void setPassword(String encodedPassword) {
-        this.password = encodedPassword;
-    }
-
-    public void setUsername( String username) {
+        this.password = password;
         this.username = username;
+        this.role = role;
     }
 
-    public void setRole(UserRole userRole) {
-        this.role = userRole;
-    }
 }
