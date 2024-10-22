@@ -1,9 +1,11 @@
 package com.sparta.newspeed.user.controller;
 
+import com.sparta.newspeed.user.dto.UserRequestDto;
 import com.sparta.newspeed.user.dto.DeleteRequestDto;
 import com.sparta.newspeed.user.dto.ProfileUpdateDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
 import com.sparta.newspeed.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,15 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping("/auth/signup")
+    public ResponseEntity<UserResponseDto> signup(
+            @Valid @RequestBody UserRequestDto userRequestDto,
+            HttpServletResponse response
+    ) {
+        UserResponseDto user = userService.createUser(userRequestDto, response);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
 
     @GetMapping("/user")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
