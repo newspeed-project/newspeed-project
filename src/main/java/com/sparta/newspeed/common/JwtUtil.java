@@ -1,5 +1,6 @@
 package com.sparta.newspeed.common;
 
+import com.sparta.newspeed.domain.user.UserRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -127,4 +128,6 @@ public class JwtUtil {
         }
         return Optional.empty();
     }
+
+
 }
