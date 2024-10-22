@@ -25,7 +25,7 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     private String username;
 
-    @NotBlank(message = "이메일은 비어있을 수 없습니다.") @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$") @Email(message = "유효한 이메일 형식이 아닙니다.")
+    @NotBlank(message = "이메일은 비어있을 수 없습니다.") @Email(message = "유효한 이메일 형식이 아닙니다.")
     @Column(nullable = false)
     private String email;
 
