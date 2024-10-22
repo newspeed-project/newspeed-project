@@ -5,11 +5,9 @@ import com.sparta.newspeed.common.PasswordEncoder;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
 import com.sparta.newspeed.domain.user.UserRole;
-import com.sparta.newspeed.user.dto.UserRequestDto;
-import com.sparta.newspeed.user.dto.DeleteRequestDto;
-import com.sparta.newspeed.user.dto.ProfileUpdateDto;
-import com.sparta.newspeed.user.dto.UserResponseDto;
+import com.sparta.newspeed.user.dto.*;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +23,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public UserResponseDto createUser(UserRequestDto userRequestDTO, HttpServletResponse res) {
+    public UserResponseDto createUser(UserRequestDto userRequestDto, HttpServletResponse res) {
         // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
+        String encodedPassword = passwordEncoder.encode(userRequestDto.getPassword());
+
+        // 중복 확인
+        checkIfPreviousUserExists(userRequestDto.getUsername());
 
         // 유저 생성 및 필드 설정
         User user = new User();
-        user.signup(userRequestDTO.getEmail(), encodedPassword, userRequestDTO.getUsername(), UserRole.USER);
+        user.signup(userRequestDto.getEmail(), encodedPassword, userRequestDto.getUsername(), UserRole.USER);
 
         // 유저 저장
         userRepository.save(user);
@@ -41,7 +42,23 @@ public class UserService {
 
         jwtUtil.addJwtToCookie(token, res);
 
-        // UserResponseDto에 유저 정보를 포함해서 반환
+        // userRequestDto에 유저 정보를 포함해서 반환
+        return new UserResponseDto(user);
+    }
+
+    public UserResponseDto login(@Valid LoginRequestDto reqDto, HttpServletResponse res) {
+        User user = userRepository.findByUsername(reqDto.getUsername()).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+        );
+
+        if (user.isActive() == false) {
+            throw new IllegalArgumentException("탈퇴한 유저입니다.");
+        }
+
+        checkIfPasswordMatches(user, reqDto.getPassword());
+
+        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
+        jwtUtil.addJwtToCookie(token, res);
         return new UserResponseDto(user);
     }
 
@@ -73,10 +90,11 @@ public class UserService {
 
         reqDto.initPassword(passwordEncoder.encode(reqDto.getNewPassword()));
 
-        user.update(reqDto.getNewPassword(), reqDto.getUsername());
+        user.update(reqDto.getNewPassword(), reqDto.getEmail());
         return new UserResponseDto(user);
     }
 
+    @Transactional
     public void deleteUser(Long id, DeleteRequestDto reqDto) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
@@ -87,6 +105,13 @@ public class UserService {
     }
 
     // ========== 편의 메서드 ==========
+
+    private void checkIfPreviousUserExists(String username) {
+        Long countPreviousUser = userRepository.countAllByUsername(username);
+        if (countPreviousUser != 0) {
+            throw new IllegalArgumentException("중복된 아이디입니다.");
+        }
+    }
 
     private void checkIfPasswordMatches(User user, String password) {
         if (!passwordEncoder.matches(password, user.getPassword())) {
