@@ -6,7 +6,6 @@ import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
 import com.sparta.newspeed.domain.user.UserRole;
 import com.sparta.newspeed.user.dto.*;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
