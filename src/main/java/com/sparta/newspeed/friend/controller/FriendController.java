@@ -24,4 +24,22 @@ public class FriendController {
         friendService.sendRequest(reqDto, jwtUser);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PatchMapping("/friend/{id}/friend-request")
+    public ResponseEntity<Void> acceptRequest(
+            @PathVariable Long id,
+            @RequestAttribute("user") User jwtUser
+    ) {
+        friendService.acceptRequest(id, jwtUser);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/friend/{id}/friend-request")
+    public ResponseEntity<Void> rejectRequest(
+            @PathVariable Long id,
+            @RequestAttribute("user") User jwtUser
+    ) {
+        friendService.rejectRequest(id, jwtUser);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
