@@ -47,7 +47,16 @@ public class FriendController {
             @PathVariable Long id,
             @RequestAttribute("user") User jwtUser
     ) {
-        friendService.rejectRequest(id, jwtUser);
+        friendService.deleteFriend(id, jwtUser);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/friend/{id}")
+    public ResponseEntity<Void> deleteFriend(
+            @PathVariable Long id,
+            @RequestAttribute("user") User jwtUser
+    ) {
+        friendService.deleteFriend(id, jwtUser);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
