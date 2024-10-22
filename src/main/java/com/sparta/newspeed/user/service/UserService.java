@@ -26,8 +26,8 @@ public class UserService {
         return userResponseDtos;
     }
 
-    public UserResponseDto getUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(
+    public UserResponseDto getUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
         );
         return new UserResponseDto(user);
