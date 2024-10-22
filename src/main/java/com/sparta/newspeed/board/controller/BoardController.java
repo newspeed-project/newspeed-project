@@ -19,8 +19,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long id) {
-        BoardResponseDto board = boardService.getBoardById(id);
+    public ResponseEntity<ReadBoardResponseDto> getBoard(@PathVariable Long id) {
+        ReadBoardResponseDto board = boardService.getBoardById(id);
         return ResponseEntity.ok(board);
     }
 
@@ -37,8 +37,8 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BoardResponseDto>> getAllBoards() {
-        List<BoardResponseDto> boards = boardService.getAllBoards();
+    public ResponseEntity<List<ReadAllBoardResponseDto>> getAllBoards() {
+        List<ReadAllBoardResponseDto> boards = boardService.getAllBoards();
         return ResponseEntity.ok(boards);
     }
 

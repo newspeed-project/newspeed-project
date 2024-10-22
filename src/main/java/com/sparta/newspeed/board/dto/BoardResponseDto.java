@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoardResponseDto {
 
-    private String statusCode;
-
-    private String message;
-
     private Long id;
 
 
@@ -20,9 +16,7 @@ public class BoardResponseDto {
 
     private String content;
 
-    public BoardResponseDto(String statusCode, String message, Board board) {
-        this.statusCode = statusCode;
-        this.message = message;
+    public BoardResponseDto(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
