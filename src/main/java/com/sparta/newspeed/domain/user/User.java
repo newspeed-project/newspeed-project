@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Table(name = "users")
@@ -30,19 +32,33 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     private String password;
 
-
-    @Enumerated(EnumType.STRING) // 역할을 문자열로 저장
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @Contract(pure = true)
     public UserRole getRole() {
         return null;
     }
+  
+    @Column(nullable = false)
+    private boolean active = true;
+
+    private LocalDateTime deleteDate;
+  
     public void signup(String email, String password, String username, UserRole role) {
         this.email = email;
         this.password = password;
         this.username = username;
         this.role = role;
     }
+  
+    public void update(String newPassword, String newUsername) {
+        this.password = newPassword;
+        this.username = newUsername;
+    }
 
+    public void delete() {
+        this.deleteDate = LocalDateTime.now();
+        this.active = false;
+    }
 }
