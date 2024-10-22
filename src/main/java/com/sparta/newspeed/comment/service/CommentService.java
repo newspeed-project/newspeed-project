@@ -36,8 +36,7 @@ public class CommentService {
 
         // 댓글 저장
         Comment comment = new Comment();
-        comment.setContent(requestDto.getContent());
-        comment.setBoard(board);
+        comment.saveComment(requestDto.getContent(), board);
 
         return commentRepository.save(comment);
     }
