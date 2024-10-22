@@ -4,6 +4,7 @@ import com.sparta.newspeed.board.dto.*;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.domain.user.User;
+import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,18 @@ public class BoardService {
         return new CreateBoardResponseDto("201", "게시물 생성 완료", board.getId());
     }
 
-    public List<BoardResponseDto> getBoardById(Long id) {
-        List<Board> boards = boardRepository.findAllById(id);
-        return boards.stream()
-                .map(BoardResponseDto::new).toList();
+    public BoardResponseDto getBoardById(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다."));
+        return new BoardResponseDto("201", "특정 게시물 조회 완료", board);
     }
 
+    public List<BoardResponseDto> getAllBoards() {
+        List<Board> boards = boardRepository.findAll();
+        return boards.stream()
+                .map(board -> new BoardResponseDto("201", "전체 게시물 조회 완료", board))
+                .toList();
+    }
 
     @Transactional
     public EditBoardResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto) {

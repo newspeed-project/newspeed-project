@@ -4,9 +4,11 @@ import com.sparta.newspeed.domain.TimeStamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "users")
 @NoArgsConstructor
 public class User extends TimeStamped {

@@ -19,12 +19,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<BoardResponseDto>> getBoard(@PathVariable Long id) {
-        List<BoardResponseDto> board = boardService.getBoardById(id);
-        if(board.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long id) {
+        BoardResponseDto board = boardService.getBoardById(id);
         return ResponseEntity.ok(board);
     }
 
@@ -39,4 +35,11 @@ public class BoardController {
         EditBoardResponseDto resDto = boardService.editBoard(id, reqDto);
         return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
+
+    @GetMapping
+    public ResponseEntity<List<BoardResponseDto>> getAllBoards() {
+        List<BoardResponseDto> boards = boardService.getAllBoards();
+        return ResponseEntity.ok(boards);
+    }
+
 }
