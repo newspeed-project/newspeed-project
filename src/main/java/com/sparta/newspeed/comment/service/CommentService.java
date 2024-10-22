@@ -42,10 +42,6 @@ public class CommentService {
     }
 
 
-    //댓글 조회
-    public List<Comment> findCommentsByBoardId(Long boardId) {
-        return commentRepository.findByBoardId(boardId);
-    }
 
     //댓글 수정
     @Transactional
