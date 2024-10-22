@@ -34,7 +34,7 @@ public class CommentService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 게시물이 존재하지 않습니다. ID: " + boardId));
 
-         // 댓글 저장
+        // 댓글 저장
         Comment comment = new Comment();
         comment.setContent(requestDto.getContent());
         comment.setBoard(board);
@@ -46,5 +46,16 @@ public class CommentService {
     //댓글 조회
     public List<Comment> findCommentsByBoardId(Long boardId) {
         return commentRepository.findByBoardId(boardId);
+    }
+
+    //댓글 수정
+    @Transactional
+    public Comment updateComment(Long commentId, CommentRequestDto requestDto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 댓글이 존재하지 않습니다. ID: " + commentId));
+
+        comment.setContent(requestDto.getContent());
+
+        return commentRepository.save(comment);
     }
 }

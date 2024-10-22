@@ -30,4 +30,13 @@ public class CommentController {
     public List<Comment> getCommentsByBoard(@PathVariable Long scheduleId) {
         return commentService.findCommentsByBoardId(scheduleId);
     }
+
+    // 3. 댓글 수정
+    @PutMapping("/comments/{id}")
+    public Comment updateComment(
+            @PathVariable Long boardId,
+            @PathVariable Long commentId,
+            @Valid @RequestBody CommentRequestDto requestDto) {
+        return commentService.updateComment(commentId, requestDto);
+    }
 }
