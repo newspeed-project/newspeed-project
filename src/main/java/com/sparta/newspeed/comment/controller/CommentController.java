@@ -27,16 +27,11 @@ public class CommentController {
         return commentService.saveComment(boardId, requestDto);
     }
 
-    // 2. 게시물에 대한 댓글 조회
-    @GetMapping("/comments")
-    public List<Comment> getCommentsByBoard(@PathVariable Long scheduleId) {
-        return commentService.findCommentsByBoardId(scheduleId);
-    }
+
 
     // 3. 댓글 수정
     @PutMapping("/comments/{id}")
     public Comment updateComment(
-
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto requestDto) {
 
