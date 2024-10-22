@@ -3,6 +3,7 @@ package com.sparta.newspeed.user.controller;
 import com.sparta.newspeed.user.dto.ProfileUpdateDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
 import com.sparta.newspeed.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, ProfileUpdateDto reqDto) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid ProfileUpdateDto reqDto) {
         UserResponseDto user = userService.updateUser(id, reqDto);
         return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }
