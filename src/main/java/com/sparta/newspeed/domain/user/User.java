@@ -22,4 +22,9 @@ public class User extends TimeStamped {
 
     @Column(nullable = false)
     private String password;
+
+    public void update(String newPassword, String newUsername) {
+        this.password = newPassword;
+        this.username = newUsername;
+    }
 }

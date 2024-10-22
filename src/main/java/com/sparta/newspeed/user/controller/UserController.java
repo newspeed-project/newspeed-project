@@ -1,14 +1,13 @@
 package com.sparta.newspeed.user.controller;
 
+import com.sparta.newspeed.user.dto.ProfileUpdateDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
 import com.sparta.newspeed.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +28,11 @@ public class UserController {
     public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
         UserResponseDto user = userService.getUser(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping("/user/{id}")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid ProfileUpdateDto reqDto) {
+        UserResponseDto user = userService.updateUser(id, reqDto);
+        return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }
 }
