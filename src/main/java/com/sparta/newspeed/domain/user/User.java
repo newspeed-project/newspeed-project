@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -25,8 +27,18 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
+    private LocalDateTime deleteDate;
+
     public void update(String newPassword, String newUsername) {
         this.password = newPassword;
         this.username = newUsername;
+    }
+
+    public void delete() {
+        this.deleteDate = LocalDateTime.now();
+        this.active = false;
     }
 }

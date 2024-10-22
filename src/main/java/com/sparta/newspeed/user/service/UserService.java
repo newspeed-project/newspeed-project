@@ -3,8 +3,10 @@ package com.sparta.newspeed.user.service;
 import com.sparta.newspeed.common.PasswordEncoder;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
+import com.sparta.newspeed.user.dto.DeleteRequestDto;
 import com.sparta.newspeed.user.dto.ProfileUpdateDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +53,17 @@ public class UserService {
         return new UserResponseDto(user);
     }
 
+    public void deleteUser(Long id, DeleteRequestDto reqDto) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+        );
+
+        checkIfPasswordMatches(user, reqDto.getPassword());
+        user.delete();      // 유저 Entity 삭제 관련 필드만 수정. 나머지 모든 데이터는 유지
+    }
+
     // ========== 편의 메서드 ==========
+
     private void checkIfPasswordMatches(User user, String password) {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
