@@ -1,4 +1,4 @@
-package com.sparta.newspeed.domain.user.dto;
+package com.sparta.newspeed.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequestDTO {
+public class UserRequestDto {
 
     @NotBlank(message = "유저명은 비어있을 수 없습니다.")
     @Size(max = 10, message = "유저명은 최대 10글자까지 가능합니다.")

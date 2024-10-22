@@ -1,12 +1,15 @@
 package com.sparta.newspeed.user.service;
 
+import com.sparta.newspeed.common.JwtUtil;
 import com.sparta.newspeed.common.PasswordEncoder;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
+import com.sparta.newspeed.domain.user.UserRole;
+import com.sparta.newspeed.user.dto.UserRequestDto;
 import com.sparta.newspeed.user.dto.DeleteRequestDto;
 import com.sparta.newspeed.user.dto.ProfileUpdateDto;
 import com.sparta.newspeed.user.dto.UserResponseDto;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,27 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
+    public UserResponseDto createUser(UserRequestDto userRequestDTO, HttpServletResponse res) {
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
+
+        // 유저 생성 및 필드 설정
+        User user = new User();
+        user.signup(userRequestDTO.getEmail(), encodedPassword, userRequestDTO.getUsername(), UserRole.USER);
+
+        // 유저 저장
+        userRepository.save(user);
+
+        // JWT 토큰 발급
+        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
+
+        jwtUtil.addJwtToCookie(token, res);
+
+        // UserResponseDto에 유저 정보를 포함해서 반환
+        return new UserResponseDto(user);
+    }
 
     @Transactional(readOnly = true)
     public List<UserResponseDto> getAllUsers() {

@@ -34,11 +34,6 @@ public class User extends TimeStamped {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
-
-    @Contract(pure = true)
-    public UserRole getRole() {
-        return null;
-    }
   
     @Column(nullable = false)
     private boolean active = true;
