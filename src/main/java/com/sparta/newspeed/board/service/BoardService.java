@@ -21,12 +21,10 @@ public class BoardService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public CreateBoardResponseDto createBoard(UpdateBoardRequestDto reqDto) {
-        // todo: 인증 기능이 구현되면 쿠키를 통해 얻은 유저 정보의 Id값으로 바꿔줘야 함.
-        User user = userRepository.findById(1L).orElseThrow(IllegalArgumentException::new);
+    public CreateBoardResponseDto createBoard(UpdateBoardRequestDto reqDto, User jwtUser) {
 
         Board board = new Board(
-                user,
+                jwtUser,
                 reqDto.getTitle(),
                 reqDto.getContent()
         );
@@ -48,25 +46,29 @@ public class BoardService {
     }
 
     @Transactional
-    public EditBoardResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto) {
+    public EditBoardResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto, User jwtUser) {
 
-        // todo: 쿠키의 유저id 와 요청하고있는 board의 작성자id가 같은지 검사하는 로직 필요
         Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         board.update(
                 reqDto.getTitle(),
                 reqDto.getContent()
         );
+        if (!board.getUser().getId().equals(jwtUser.getId()))
+            throw new IllegalArgumentException("자신이 작성한 게시물만 수정 가능합니다.");
 
         return new EditBoardResponseDto("200", "게시물 수정 완료", board);
     }
 
     @Transactional
-    public void deleteBoard(Long id, DeleteBoardRequestDto reqDto) {
+    public void deleteBoard(Long id, DeleteBoardRequestDto reqDto, User jwtUser) {
 
-        // todo: 쿠키의 유저id 와 요청하고있는 board의 작성자id가 같은지 검사하는 로직 필요
-        User user = userRepository.findById(2L).orElseThrow(IllegalArgumentException::new);
+
         Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-        checkUserPassword(reqDto.getPassword(), user);
+
+        if (!board.getUser().getId().equals(jwtUser.getId()))
+            throw new IllegalArgumentException("자신이 작성한 게시물만 수정 가능합니다.");
+
+        checkUserPassword(reqDto.getPassword(), jwtUser);
 
         boardRepository.delete(board);
     }
