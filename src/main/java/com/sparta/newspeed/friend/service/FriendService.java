@@ -21,9 +21,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
 
     public void sendRequest(FriendRequestDto reqDto, User jwtUser) {
-        User targetUser = userRepository.findById(reqDto.getFriendId()).orElseThrow(
-                () -> new IllegalArgumentException("친구 ID가 잘못되었습니다.")
-        );
+        User targetUser = findRequestUser(reqDto.getFriendId());
 
         Friend friend = new Friend();
         friend.makeFriend(jwtUser, targetUser);
@@ -45,12 +43,27 @@ public class FriendService {
     }
 
     public void acceptRequest(Long id, User jwtUser) {
-        Friend friend = friendRepository.findByResponseUser(jwtUser);
+        User requestUser = findRequestUser(id);
+        Friend friend = findFriend(requestUser, jwtUser);
         friend.accept();
     }
 
-    public void rejectRequest(Long id, User jwtUser) {
-        Friend friend = friendRepository.findByResponseUser(jwtUser);
+    public void deleteFriend(Long id, User jwtUser) {
+        User requestUser = findRequestUser(id);
+        Friend friend = findFriend(requestUser, jwtUser);
         friendRepository.delete(friend);
+    }
+
+    // ========== 편의 메서드 ==========
+    private User findRequestUser(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+        );
+    }
+
+    private Friend findFriend(User requestUser, User responseUser) {
+        return friendRepository.findByRequestUserAndResponseUser(requestUser, responseUser).orElseThrow(
+                () -> new IllegalArgumentException("친구 관계가 아닙니다.")
+        );
     }
 }

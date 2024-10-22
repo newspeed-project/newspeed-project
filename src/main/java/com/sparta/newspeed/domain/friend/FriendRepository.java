@@ -7,11 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
-
-    Friend findByResponseUser(User jwtUser);
-
     /*
     * req 혹은 res 컬럼이 userId인 경우의 쿼리
     * SELECT CASE WHEN request_user_id = {userId} THEN response_user_id
@@ -27,4 +25,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             "FROM Friend f " +
             "WHERE f.status = :status AND (f.requestUser.id = :userId OR f.responseUser.id = :userId)")
     List<Long> getFriendIds(@Param("userId") Long userId, @Param("status") RequestStatus status);
+
+    Optional<Friend> findByRequestUserAndResponseUser(User requestUser, User responseUser);
+
 }
