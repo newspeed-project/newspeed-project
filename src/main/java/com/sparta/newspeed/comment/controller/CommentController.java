@@ -16,8 +16,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/comments")
-    public ResponseEntity<List<ReadAllCommentResponseDto>> getComments(@PathVariable Long boardId) {
-        List<ReadAllCommentResponseDto> comments = commentService.getCommentsByBoardId(boardId);
+    public ResponseEntity<ReadAllCommentResponseDto> getComments(@PathVariable Long boardId) {
+        ReadAllCommentResponseDto comments = commentService.getCommentsByBoardId(boardId);
         return ResponseEntity.ok(comments);
     }
 }

@@ -16,10 +16,8 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public List<ReadAllCommentResponseDto> getCommentsByBoardId(Long boardId) {
+    public ReadAllCommentResponseDto getCommentsByBoardId(Long boardId) {
         List<Comment> comments = commentRepository.findAllByBoardId(boardId);
-        return comments.stream()
-                .map(comment -> new ReadAllCommentResponseDto("200", "특정 게시물의 댓글 조회 완료", comment))
-                .collect(Collectors.toList());
+        return new ReadAllCommentResponseDto("200", "특정 게시물의 댓글 조회 완료", comments);
     }
 }
