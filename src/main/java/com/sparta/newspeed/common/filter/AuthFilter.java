@@ -1,6 +1,8 @@
 package com.sparta.newspeed.common.filter;
 
 import com.sparta.newspeed.common.JwtUtil;
+import com.sparta.newspeed.domain.user.User;
+import com.sparta.newspeed.domain.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,7 +53,7 @@ public class AuthFilter implements Filter {
             // 토큰에서 사용자 정보 추출
             Claims info = jwtUtil.getUserInfoFromToken(token);
 
-            User user = userRepository.findByUsername(info.getSubject()).orElseThrow(
+            User user = (User) userRepository.findByUsername(info.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("User Not Found")
             );
 
