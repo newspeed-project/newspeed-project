@@ -29,4 +29,8 @@ public class Friend {
         this.responseUser = targetUser;
         this.status = RequestStatus.PENDING;
     }
+
+    public void accept() {
+        this.status = RequestStatus.ACCEPTED;
+    }
 }
