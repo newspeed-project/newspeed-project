@@ -40,11 +40,9 @@ public class BoardService {
         return new ReadBoardResponseDto("200", "특정 게시물 조회 완료", board);
     }
 
-    public List<ReadAllBoardResponseDto> getAllBoards() {
+    public ReadAllBoardResponseDto getAllBoards() {
         List<Board> boards = boardRepository.findAll();
-        return boards.stream()
-                .map(board -> new ReadAllBoardResponseDto("200", "전체 게시물 조회 완료", board))
-                .toList();
+        return new ReadAllBoardResponseDto("200", "전체 게시물 조회 완료", boards);
     }
 
     @Transactional

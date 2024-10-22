@@ -37,8 +37,8 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReadAllBoardResponseDto>> getAllBoards() {
-        List<ReadAllBoardResponseDto> boards = boardService.getAllBoards();
+    public ResponseEntity<ReadAllBoardResponseDto> getAllBoards() {
+        ReadAllBoardResponseDto boards = boardService.getAllBoards();
         return ResponseEntity.ok(boards);
     }
 

@@ -4,17 +4,22 @@ import com.sparta.newspeed.domain.board.Board;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.stream.Collectors;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class ReadAllBoardResponseDto {
 
     private String httpStatusCode;
     private String message;
-    private BoardResponseDto data;
+    private List<BoardResponseDto> data;
 
-    public ReadAllBoardResponseDto(String httpStatusCode, String message, Board board) {
+    public ReadAllBoardResponseDto(String httpStatusCode, String message, List<Board> boards) {
         this.httpStatusCode = httpStatusCode;
         this.message = message;
-        this.data = new BoardResponseDto(board);
+        this.data = boards.stream()
+                .map(BoardResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
