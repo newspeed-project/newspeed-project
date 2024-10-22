@@ -1,6 +1,8 @@
 package com.sparta.newspeed.comment.controller;
 
 import com.sparta.newspeed.comment.dto.CommentRequestDto;
+import com.sparta.newspeed.common.exception.ResourceNotFoundException;
+import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.comment.Comment;
 import com.sparta.newspeed.comment.service.CommentService;
 import jakarta.validation.Valid;
@@ -34,9 +36,11 @@ public class CommentController {
     // 3. 댓글 수정
     @PutMapping("/comments/{id}")
     public Comment updateComment(
-            @PathVariable Long boardId,
+
             @PathVariable Long commentId,
             @Valid @RequestBody CommentRequestDto requestDto) {
+
+
         return commentService.updateComment(commentId, requestDto);
     }
 }
