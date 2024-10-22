@@ -8,11 +8,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "users")
 @NoArgsConstructor
 public class User extends TimeStamped {
@@ -31,7 +29,6 @@ public class User extends TimeStamped {
 
     @Column(nullable = false)
     private String password;
-
 
 
     @Enumerated(EnumType.STRING) // 역할을 문자열로 저장
@@ -56,10 +53,5 @@ public class User extends TimeStamped {
 
     public void setRole(UserRole userRole) {
         this.role = userRole;
-
-    public void update(String newPassword, String newUsername) {
-        this.password = newPassword;
-        this.username = newUsername;
-
     }
 }

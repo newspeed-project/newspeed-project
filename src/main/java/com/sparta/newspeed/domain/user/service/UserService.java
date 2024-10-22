@@ -30,10 +30,11 @@ public class UserService {
 
         // 유저 생성 및 필드 설정
         User user = new User();
-        user.setEmail(userRequestDTO.getEmail()); // Email 설정
-        user.setPassword(encodedPassword); // 암호화된 비밀번호 설정
-        user.setUsername(userRequestDTO.getUsername()); // 사용자명 설정
-        user.setRole(UserRole.USER); // 기본 역할 설정
+        user.signup(userRequestDTO.getEmail(), encodedPassword, userRequestDTO.getUsername(), UserRole.USER);
+//        user.setEmail(userRequestDTO.getEmail()); // Email 설정
+//        user.setPassword(encodedPassword); // 암호화된 비밀번호 설정
+//        user.setUsername(userRequestDTO.getUsername()); // 사용자명 설정
+//        user.setRole(UserRole.USER); // 기본 역할 설정
 
         // 유저 저장
         userRepository.save(user);
