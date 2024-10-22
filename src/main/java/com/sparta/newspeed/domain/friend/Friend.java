@@ -23,4 +23,10 @@ public class Friend {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private RequestStatus status;
+
+    public void makeFriend(User jwtUser, User targetUser) {
+        this.requestUser = jwtUser;
+        this.responseUser = targetUser;
+        this.status = RequestStatus.PENDING;
+    }
 }
