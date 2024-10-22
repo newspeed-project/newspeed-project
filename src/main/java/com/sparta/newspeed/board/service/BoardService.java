@@ -1,6 +1,7 @@
 package com.sparta.newspeed.board.service;
 
 import com.sparta.newspeed.board.dto.*;
+import com.sparta.newspeed.common.PasswordEncoder;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.domain.user.User;
@@ -17,10 +18,11 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public CreateBoardResponseDto createBoard(UpdateBoardRequestDto reqDto) {
-        // 임시 가짜 유저 엔티티 생성 쿠키 토큰 생기면 만들어야함.
+        // todo: 인증 기능이 구현되면 쿠키를 통해 얻은 유저 정보의 Id값으로 바꿔줘야 함.
         User user = userRepository.findById(1L).orElseThrow(IllegalArgumentException::new);
 
         Board board = new Board(
@@ -50,6 +52,7 @@ public class BoardService {
     @Transactional
     public EditBoardResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto) {
 
+        // todo: 쿠키의 유저id 와 요청하고있는 board의 작성자id가 같은지 검사하는 로직 필요
         Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         board.update(
                 reqDto.getTitle(),
@@ -57,5 +60,21 @@ public class BoardService {
         );
 
         return new EditBoardResponseDto("200", "게시물 수정 완료", board);
+    }
+
+    @Transactional
+    public void deleteBoard(Long id, DeleteBoardRequestDto reqDto) {
+
+        // todo: 쿠키의 유저id 와 요청하고있는 board의 작성자id가 같은지 검사하는 로직 필요
+        User user = userRepository.findById(2L).orElseThrow(IllegalArgumentException::new);
+        Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        checkUserPassword(reqDto.getPassword(), user);
+
+        boardRepository.delete(board);
+    }
+
+    private void checkUserPassword (String password, User user) {
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 }
