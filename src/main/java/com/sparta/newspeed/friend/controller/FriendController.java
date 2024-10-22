@@ -1,6 +1,7 @@
 package com.sparta.newspeed.friend.controller;
 
 import com.sparta.newspeed.domain.user.User;
+import com.sparta.newspeed.friend.dto.FriendListResponseDto;
 import com.sparta.newspeed.friend.dto.FriendRequestDto;
 import com.sparta.newspeed.friend.service.FriendService;
 import jakarta.validation.Valid;
@@ -24,6 +25,13 @@ public class FriendController {
         friendService.sendRequest(reqDto, jwtUser);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/friend")
+    public ResponseEntity<FriendListResponseDto> getFriendList(@RequestAttribute("user") User jwtUser) {
+        FriendListResponseDto resDto = friendService.getFriendList(jwtUser);
+        return ResponseEntity.status(HttpStatus.OK).body(resDto);
+    }
+
 
     @PatchMapping("/friend/{id}/friend-request")
     public ResponseEntity<Void> acceptRequest(
