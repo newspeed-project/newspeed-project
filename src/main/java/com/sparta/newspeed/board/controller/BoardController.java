@@ -36,7 +36,7 @@ public class BoardController {
 
     @PutMapping("/{id}")
     public ResponseEntity<EditBoardResponseDto> editBoard (@PathVariable Long id, @RequestBody @Valid UpdateBoardRequestDto reqDto) {
-        EditBoardResponseDto resDto = boardService.EditBoard(id, reqDto);
+        EditBoardResponseDto resDto = boardService.editBoard(id, reqDto);
         return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 }

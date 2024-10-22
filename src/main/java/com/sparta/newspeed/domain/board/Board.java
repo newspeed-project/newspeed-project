@@ -31,7 +31,7 @@ public class Board extends TimeStamped {
         this.content = content;
     }
 
-    public void Update(String title, String content) {
+    public void update(String title, String content) {
         this.title = title;
         this.content = content;
     }

@@ -41,10 +41,10 @@ public class BoardService {
 
 
     @Transactional
-    public EditBoardResponseDto EditBoard(Long id, UpdateBoardRequestDto reqDto) {
+    public EditBoardResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto) {
 
         Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-        board.Update(
+        board.update(
                 reqDto.getTitle(),
                 reqDto.getContent()
         );
