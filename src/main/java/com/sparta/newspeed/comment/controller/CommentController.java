@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/board/{boardId}")
 @RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/{boardId}/comments")
+    @GetMapping("/comments")
     public ResponseEntity<List<ReadAllCommentResponseDto>> getComments(@PathVariable Long boardId) {
         List<ReadAllCommentResponseDto> comments = commentService.getCommentsByBoardId(boardId);
         return ResponseEntity.ok(comments);
