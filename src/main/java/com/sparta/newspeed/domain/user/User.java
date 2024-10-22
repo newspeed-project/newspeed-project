@@ -18,14 +18,18 @@ public class User extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "유저명은 비어있을 수 없습니다.") @Size(max = 10, message = "유저명은 최대 10글자까지 가능합니다.")
     @Column(nullable = false)
     private String username;
 
+    @NotBlank(message = "이메일은 비어있을 수 없습니다.") @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$") @Email(message = "유효한 이메일 형식이 아닙니다.")
     @Column(nullable = false)
     private String email;
 
+
     @Column(nullable = false)
     private String password;
+
 
     @Enumerated(EnumType.STRING) // 역할을 문자열로 저장
     private UserRole role;
@@ -35,15 +39,19 @@ public class User extends TimeStamped {
         return null;
     }
 
-    public void setEmail(@NotBlank(message = "이메일은 비어있을 수 없습니다.") @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$") @Email(message = "유효한 이메일 형식이 아닙니다.") String email) {
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 
-    public void setUsername(@NotBlank(message = "유저명은 비어있을 수 없습니다.") @Size(max = 10, message = "유저명은 최대 10글자까지 가능합니다.") String username) {
+    public void setUsername( String username) {
+        this.username = username;
     }
 
     public void setRole(UserRole userRole) {
+        this.role = userRole;
     }
 }
