@@ -33,12 +33,9 @@ public class CommentService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 게시물이 존재하지 않습니다. ID: " + boardId));
 
-        // 작성자 이름으로 User 조회
-        User user = userRepository.findByUsername(requestDto.getUser())
-                .orElseThrow(() -> new ResourceNotFoundException("작성자가 존재하지 않습니다. 이름: " + requestDto.getUser()));
-        // 댓글 저장
+         // 댓글 저장
         Comment comment = new Comment();
-        comment.setUser(user);
+
         comment.setContent(requestDto.getContent());
         comment.setBoard(board);
 
