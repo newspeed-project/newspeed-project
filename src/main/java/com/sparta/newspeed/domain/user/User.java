@@ -28,7 +28,6 @@ public class User extends TimeStamped {
     @Column(nullable = false)
     private String email;
 
-
     @Column(nullable = false)
     private String password;
 
@@ -47,9 +46,9 @@ public class User extends TimeStamped {
         this.role = role;
     }
   
-    public void update(String newPassword, String newUsername) {
+    public void update(String newPassword, String newEmail) {
         this.password = newPassword;
-        this.username = newUsername;
+        this.username = newEmail;
     }
 
     public void delete() {

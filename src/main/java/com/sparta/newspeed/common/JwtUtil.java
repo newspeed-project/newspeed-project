@@ -72,6 +72,7 @@ public class JwtUtil {
 
             // 토큰의 Name 값과 Value 값 전달
             Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token);
+            cookie.setPath("/");
 
             // Response 객체에 Cookie 추가
             res.addCookie(cookie);
@@ -82,12 +83,11 @@ public class JwtUtil {
 
     // 토큰에서 JWT 가져오기
     public String substringToken(String tokenValue) {
-        if (!StringUtils.hasText(tokenValue) || !tokenValue.startsWith(BEARER_PREFIX)) {
-            log.error("토큰을 찾을 수 없습니다.:");
-            throw new NullPointerException("토큰을 찾을 수 없습니다.");
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
         }
-
-        return tokenValue.substring(7);
+        log.error("Not Found Token");
+        throw new NullPointerException("Not Found Token");
     }
 
     // 토큰 검증
@@ -113,20 +113,20 @@ public class JwtUtil {
     }
 
     // HttpServletRequest에서 Cookie Value: JWT 가져오기
-    public Optional<String> getTokenFromRequest(HttpServletRequest req) {
+    public String getTokenFromRequest(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
-                        return Optional.ofNullable(URLDecoder.decode(cookie.getValue(), "UTF-8"));
+                        return URLDecoder.decode(cookie.getValue(), "UTF-8");
                     } catch (UnsupportedEncodingException e) {
-                        return Optional.empty();
+                        return null;
                     }
                 }
             }
         }
-        return Optional.empty();
+        return null;
     }
 
 

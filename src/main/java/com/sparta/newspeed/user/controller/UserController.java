@@ -1,9 +1,6 @@
 package com.sparta.newspeed.user.controller;
 
-import com.sparta.newspeed.user.dto.UserRequestDto;
-import com.sparta.newspeed.user.dto.DeleteRequestDto;
-import com.sparta.newspeed.user.dto.ProfileUpdateDto;
-import com.sparta.newspeed.user.dto.UserResponseDto;
+import com.sparta.newspeed.user.dto.*;
 import com.sparta.newspeed.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -30,6 +27,15 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
+    @PostMapping("/auth/login")
+    public ResponseEntity<UserResponseDto> login(
+            @Valid @RequestBody LoginRequestDto reqDto,
+            HttpServletResponse response
+    ) {
+        UserResponseDto user = userService.login(reqDto, response);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     @GetMapping("/user")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<UserResponseDto> users = userService.getAllUsers();
@@ -43,14 +49,14 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid ProfileUpdateDto reqDto) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody ProfileUpdateDto reqDto) {
         UserResponseDto user = userService.updateUser(id, reqDto);
         return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id, @Valid DeleteRequestDto reqDto) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, @Valid @RequestBody DeleteRequestDto reqDto) {
         userService.deleteUser(id, reqDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
