@@ -3,6 +3,8 @@ package com.sparta.newspeed.domain.user.controller;
 import com.sparta.newspeed.domain.user.dto.UserRequestDTO;
 import com.sparta.newspeed.domain.user.dto.UserResponseDTO;
 import com.sparta.newspeed.domain.user.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +21,8 @@ public class UserController {
 
     //1. 유저 생성 (회원 가입)
     @PostMapping("/auth/signup")
-    public UserResponseDTO signup(@RequestBody UserRequestDTO userRequestDTO) {
-        return userService.createUser(userRequestDTO);
+    public ResponseEntity<UserResponseDTO> signup(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO responseDTO = userService.createUser(userRequestDTO);
+        return ResponseEntity.ok(responseDTO);
     }
 }
