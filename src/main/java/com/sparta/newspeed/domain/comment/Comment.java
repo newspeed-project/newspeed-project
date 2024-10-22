@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
+
 @Table(name = "comments")
 @NoArgsConstructor
 public class Comment extends TimeStamped {
@@ -28,4 +28,9 @@ public class Comment extends TimeStamped {
 
     @Column(nullable = false)
     private String content;
+
+    public void saveComment(String content, Board board) {
+        this.content = content;
+        this.board = board;
+    }
 }
