@@ -27,6 +27,7 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
+    //댓글 생성
     @Transactional
     public Comment saveComment(Long boardId, CommentRequestDto requestDto) {
         // 게시물 확인
@@ -42,7 +43,8 @@ public class CommentService {
     }
 
 
-
-
-
+    //댓글 조회
+    public List<Comment> findCommentsByBoardId(Long boardId) {
+        return commentRepository.findByBoardId(boardId);
+    }
 }

@@ -6,6 +6,8 @@ import com.sparta.newspeed.comment.service.CommentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/board/{boardId}")
 public class CommentController {
@@ -23,4 +25,9 @@ public class CommentController {
         return commentService.saveComment(boardId, requestDto);
     }
 
+    // 2. 게시물에 대한 댓글 조회
+    @GetMapping("/comments")
+    public List<Comment> getCommentsByBoard(@PathVariable Long scheduleId) {
+        return commentService.findCommentsByBoardId(scheduleId);
+    }
 }
