@@ -8,6 +8,7 @@ import com.sparta.newspeed.domain.comment.CommentRepository;
 import com.sparta.newspeed.domain.like.commentLike.CommentLike;
 import com.sparta.newspeed.domain.like.commentLike.CommentLikeRepository;
 import com.sparta.newspeed.domain.user.User;
+import com.sparta.newspeed.like.commentLike.dto.CommentLikeDefaultResponseDto;
 import com.sparta.newspeed.like.commentLike.dto.CommentLikeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,20 +21,20 @@ public class CommentLikeService {
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
 
-    public CommentLikeResponseDto likeComment(Long boardId, Long commentId, User jwtUser) {
+    public CommentLikeDefaultResponseDto likeComment(Long boardId, Long commentId, User jwtUser) {
         Board board = findBoardById(boardId);
         Comment comment = findCommentById(commentId);
         CommentLike commentLike = CommentLike.create(comment, jwtUser);
         commentLikeRepository.save(commentLike);
         Long count = commentLikeRepository.countAllByComment(comment);
-        return new CommentLikeResponseDto(count);
+        return new CommentLikeDefaultResponseDto("201", "좋아요 등록 성공", count);
     }
 
-    public CommentLikeResponseDto getLikeComment(Long boardId, Long commentId) {
+    public CommentLikeDefaultResponseDto getLikeComment(Long boardId, Long commentId) {
         Board board = findBoardById(boardId);
         Comment comment = findCommentById(commentId);
         Long count = commentLikeRepository.countAllByComment(comment);
-        return new CommentLikeResponseDto(count);
+        return new CommentLikeDefaultResponseDto("200", "좋아요 조회 성공", count);
     }
 
     public void unlikeComment(Long boardId, Long commentId, User jwtUser) {

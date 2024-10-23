@@ -6,6 +6,7 @@ import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.domain.like.boardLike.BoardLike;
 import com.sparta.newspeed.domain.like.boardLike.BoardLikeRepository;
 import com.sparta.newspeed.domain.user.User;
+import com.sparta.newspeed.like.boardLike.dto.BoardLikeDefaultResponseDto;
 import com.sparta.newspeed.like.boardLike.dto.BoardLikeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,18 +18,18 @@ public class BoardLikeService {
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
 
-    public BoardLikeResponseDto likeBoard(Long boardId, User jwtUser) {
+    public BoardLikeDefaultResponseDto likeBoard(Long boardId, User jwtUser) {
         Board board = findBoardById(boardId);
         BoardLike boardLike = BoardLike.create(board, jwtUser);
         boardLikeRepository.save(boardLike);
         Long count = boardLikeRepository.countAllByBoard(board);
-        return new BoardLikeResponseDto(count);
+        return new BoardLikeDefaultResponseDto("201", "좋아요 등록 성공", count);
     }
 
-    public BoardLikeResponseDto getLikeBoard(Long boardId) {
+    public BoardLikeDefaultResponseDto getLikeBoard(Long boardId) {
         Board board = findBoardById(boardId);
         Long count = boardLikeRepository.countAllByBoard(board);
-        return new BoardLikeResponseDto(count);
+        return new BoardLikeDefaultResponseDto("200", "좋아요 조회 성공", count);
     }
 
     public void unlikeBoard(Long boardId, User jwtUser) {

@@ -1,6 +1,7 @@
 package com.sparta.newspeed.like.boardLike.controller;
 
 import com.sparta.newspeed.domain.user.User;
+import com.sparta.newspeed.like.boardLike.dto.BoardLikeDefaultResponseDto;
 import com.sparta.newspeed.like.boardLike.dto.BoardLikeResponseDto;
 import com.sparta.newspeed.like.boardLike.service.BoardLikeService;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +17,17 @@ public class BoardLikeController {
     private final BoardLikeService boardLikeService;
 
     @PostMapping("/board/{boardId}/like")
-    public ResponseEntity<BoardLikeResponseDto> likeBoard(
+    public ResponseEntity<BoardLikeDefaultResponseDto> likeBoard(
             @PathVariable Long boardId,
             @RequestAttribute("user") User jwtUser
     ) {
-        BoardLikeResponseDto resDto = boardLikeService.likeBoard(boardId, jwtUser);
-        return ResponseEntity.status(HttpStatus.OK).body(resDto);
+        BoardLikeDefaultResponseDto resDto = boardLikeService.likeBoard(boardId, jwtUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resDto);
     }
 
     @GetMapping("/board/{boardId}/like")
-    public ResponseEntity<BoardLikeResponseDto> getLikeBoard(@PathVariable Long boardId) {
-        BoardLikeResponseDto resDto = boardLikeService.getLikeBoard(boardId);
+    public ResponseEntity<BoardLikeDefaultResponseDto> getLikeBoard(@PathVariable Long boardId) {
+        BoardLikeDefaultResponseDto resDto = boardLikeService.getLikeBoard(boardId);
         return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 

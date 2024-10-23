@@ -1,6 +1,7 @@
 package com.sparta.newspeed.like.commentLike.controller;
 
 import com.sparta.newspeed.domain.user.User;
+import com.sparta.newspeed.like.commentLike.dto.CommentLikeDefaultResponseDto;
 import com.sparta.newspeed.like.commentLike.dto.CommentLikeResponseDto;
 import com.sparta.newspeed.like.commentLike.service.CommentLikeService;
 import lombok.RequiredArgsConstructor;
@@ -16,21 +17,21 @@ public class CommentLikeController {
     private final CommentLikeService commentLikeService;
 
     @PostMapping("/comments/{commentsId}/like")
-    public ResponseEntity<CommentLikeResponseDto> likeComment(
+    public ResponseEntity<CommentLikeDefaultResponseDto> likeComment(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
             @RequestAttribute("user") User jwtUser
     ) {
-        CommentLikeResponseDto resDto = commentLikeService.likeComment(boardId, commentId, jwtUser);
-        return ResponseEntity.status(HttpStatus.OK).body(resDto);
+        CommentLikeDefaultResponseDto resDto = commentLikeService.likeComment(boardId, commentId, jwtUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resDto);
     }
 
     @GetMapping("/comments/{commentsId}/like")
-    public ResponseEntity<CommentLikeResponseDto> getLikeBoard(
+    public ResponseEntity<CommentLikeDefaultResponseDto> getLikeBoard(
             @PathVariable Long boardId,
             @PathVariable Long commentId
     ) {
-        CommentLikeResponseDto resDto = commentLikeService.getLikeComment(boardId, commentId);
+        CommentLikeDefaultResponseDto resDto = commentLikeService.getLikeComment(boardId, commentId);
         return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
