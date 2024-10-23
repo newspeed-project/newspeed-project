@@ -1,7 +1,6 @@
 package com.sparta.newspeed.common.filter;
 
 import com.sparta.newspeed.common.JwtUtil;
-import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.common.exception.TokenUnauthorizedException;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
@@ -13,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import com.sparta.newspeed.domain.user.UserRepository;
-import com.sparta.newspeed.domain.user.User;
 
 import java.io.IOException;
 

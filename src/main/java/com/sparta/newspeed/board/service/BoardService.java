@@ -6,14 +6,16 @@ import com.sparta.newspeed.common.exception.ClientRequestException;
 import com.sparta.newspeed.common.exception.PasswordMismatchException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
+import com.sparta.newspeed.domain.friend.FriendRepository;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.sparta.newspeed.domain.friend.Friend;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FriendRepository friendRepository;
 
     @Transactional
     public BoardOneResponseDto createBoard(UpdateBoardRequestDto reqDto, User jwtUser) {
@@ -42,9 +45,19 @@ public class BoardService {
         return new BoardOneResponseDto("200", "특정 게시물 조회 완료", board);
     }
 
-    public BoardListResponseDto getAllBoards() {
-        List<Board> boards = boardRepository.findAll();
-        return new BoardListResponseDto("200", "전체 게시물 조회 완료", boards);
+    public BoardListResponseDto getAllBoards(User jwtUser) {
+        List<Long> friendIds = friendRepository.findAcceptedFriendIds(jwtUser.getId());
+
+        List<Board> friendBoards = boardRepository.findByUserIdIn(friendIds);
+        List<Board> nonFriendBoards = boardRepository.findByUserIdNotIn(friendIds);
+
+        friendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
+        nonFriendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
+
+        List<Board> addBoards = new ArrayList<>(friendBoards);
+        addBoards.addAll(nonFriendBoards);
+
+        return new BoardListResponseDto("200", "전체 게시물 조회 완료", addBoards);
     }
 
     @Transactional

@@ -30,4 +30,9 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     List<Friend> findByResponseUserAndStatus(User responseUser, RequestStatus status);
 
+    @Query("SELECT CASE WHEN f.requestUser.id = :userId THEN f.responseUser.id ELSE f.requestUser.id END " +
+            "FROM Friend f WHERE (f.requestUser.id = :userId OR f.responseUser.id = :userId) " +
+            "AND f.status = 'ACCEPTED'")
+    List<Long> findAcceptedFriendIds(Long userId);
+
 }

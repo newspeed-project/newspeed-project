@@ -11,6 +11,7 @@ import com.sparta.newspeed.friend.dto.FriendDefaultResponseDto;
 import com.sparta.newspeed.friend.dto.FriendListResponseDto;
 import com.sparta.newspeed.friend.dto.FriendRequestDto;
 import com.sparta.newspeed.friend.dto.FriendRequestListResponseDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
