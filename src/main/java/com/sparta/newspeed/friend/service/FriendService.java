@@ -1,17 +1,21 @@
 package com.sparta.newspeed.friend.service;
 
+import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.friend.Friend;
 import com.sparta.newspeed.domain.friend.FriendRepository;
 import com.sparta.newspeed.domain.friend.RequestStatus;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
+import com.sparta.newspeed.friend.dto.FriendDefaultResponseDto;
 import com.sparta.newspeed.friend.dto.FriendListResponseDto;
 import com.sparta.newspeed.friend.dto.FriendRequestDto;
-import com.sparta.newspeed.friend.dto.FriendDefaultResponseDto;
+import com.sparta.newspeed.friend.dto.FriendRequestListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +70,21 @@ public class FriendService {
         return friendRepository.findByRequestUserAndResponseUser(requestUser, responseUser).orElseThrow(
                 () -> new IllegalArgumentException("친구 관계가 아닙니다.")
         );
+    }
+
+    public FriendRequestListResponseDto getFriendRequestList(User jwtUser) {
+        List<Friend> pendingRequests = friendRepository.findByResponseUserAndStatus(jwtUser, RequestStatus.PENDING);
+        return Optional.ofNullable(pendingRequests)
+                .filter(list -> !list.isEmpty())
+                .map(list -> {
+                    List<Long> requestUserIds = list.stream()
+                            .map(friend -> friend.getRequestUser().getId())
+                            .collect(Collectors.toList());
+
+                    List<User> requestUsers = userRepository.findAllById(requestUserIds);
+
+                    return new FriendRequestListResponseDto("200", "친구 요청 대기 목록 조회 완료", requestUsers);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("친구 요청 대기 목록이 없습니다."));
     }
 }
