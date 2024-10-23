@@ -18,15 +18,21 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReadBoardResponseDto> getBoard(@PathVariable Long id) {
-        ReadBoardResponseDto board = boardService.getBoardById(id);
+    public ResponseEntity<BoardOneResponseDto> getBoard(@PathVariable Long id) {
+        BoardOneResponseDto board = boardService.getBoardById(id);
         return ResponseEntity.ok(board);
     }
 
     @PostMapping("")
-    public ResponseEntity<CreateBoardResponseDto> createBoard (@RequestBody @Valid UpdateBoardRequestDto reqDto, @RequestAttribute("user") User jwtUser) {
-        CreateBoardResponseDto resDto = boardService.createBoard(reqDto, jwtUser);
+    public ResponseEntity<BoardOneResponseDto> createBoard (@RequestBody @Valid UpdateBoardRequestDto reqDto, @RequestAttribute("user") User jwtUser) {
+        BoardOneResponseDto resDto = boardService.createBoard(reqDto, jwtUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(resDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<BoardListResponseDto> getAllBoards() {
+        BoardListResponseDto boards = boardService.getAllBoards();
+        return ResponseEntity.ok(boards);
     }
 
     @PutMapping("/{id}")
@@ -35,16 +41,9 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
-    @GetMapping
-    public ResponseEntity<ReadAllBoardResponseDto> getAllBoards() {
-        ReadAllBoardResponseDto boards = boardService.getAllBoards();
-        return ResponseEntity.ok(boards);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long id, @RequestBody @Valid DeleteBoardRequestDto reqDto, @RequestAttribute("user") User jwtUser) {
         boardService.deleteBoard(id, reqDto, jwtUser);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
-
 }

@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,7 +22,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public UserResponseDto createUser(UserRequestDto userRequestDto, HttpServletResponse res) {
+    public UserOneResponseDto createUser(UserRequestDto userRequestDto, HttpServletResponse res) {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userRequestDto.getPassword());
 
@@ -43,10 +42,10 @@ public class UserService {
         jwtUtil.addJwtToCookie(token, res);
 
         // userRequestDto에 유저 정보를 포함해서 반환
-        return new UserResponseDto(user);
+        return new UserOneResponseDto("201", "회원 가입 성공", user);
     }
 
-    public UserResponseDto login(@Valid LoginRequestDto reqDto, HttpServletResponse res) {
+    public LoginResponseDto login(@Valid LoginRequestDto reqDto, HttpServletResponse res) {
         User user = userRepository.findByUsername(reqDto.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
         );
@@ -59,35 +58,31 @@ public class UserService {
 
         String token = jwtUtil.createToken(user.getUsername(), user.getRole());
         jwtUtil.addJwtToCookie(token, res);
-        return new UserResponseDto(user);
+        return new LoginResponseDto("200", "로그인 성공");
     }
 
     @Transactional(readOnly = true)
-    public List<UserResponseDto> getAllUsers() {
+    public UserListResponseDto getAllUsers() {
         List<User> users = userRepository.findAll();
-        List<UserResponseDto> userResponseDtos = new ArrayList<>();
-        for (User user : users) {
-            userResponseDtos.add(new UserResponseDto(user));
-        }
-        return userResponseDtos;
+        return new UserListResponseDto("200", "전체 유저 조회 성공", users);
     }
 
-    public UserResponseDto getUser(Long id) {
+    public UserOneResponseDto getUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
         );
-        return new UserResponseDto(user);
+        return new UserOneResponseDto("200", "특정 유저 조회 성공", user);
     }
 
     @Transactional
-    public UserResponseDto updateUser(ProfileUpdateDto reqDto, User jwtUser) {
+    public UserOneResponseDto updateUser(ProfileUpdateDto reqDto, User jwtUser) {
         checkIfPasswordMatches(jwtUser, reqDto.getPassword());
         checkIfPasswordSameAsBefore(jwtUser, reqDto.getNewPassword());
 
         reqDto.initPassword(passwordEncoder.encode(reqDto.getNewPassword()));
 
         jwtUser.update(reqDto.getNewPassword(), reqDto.getEmail());
-        return new UserResponseDto(jwtUser);
+        return new UserOneResponseDto("200", "유저 정보 수정 성공", jwtUser);
     }
 
     @Transactional
