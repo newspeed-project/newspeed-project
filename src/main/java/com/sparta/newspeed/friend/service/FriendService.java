@@ -12,6 +12,7 @@ import com.sparta.newspeed.friend.dto.FriendRequestDto;
 import com.sparta.newspeed.friend.dto.FriendRequestListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,7 @@ public class FriendService {
         return new FriendListResponseDto("200", "친구 목록 조회 완료", friends);
     }
 
+    @Transactional
     public FriendDefaultResponseDto acceptRequest(Long id, User jwtUser) {
         User requestUser = findRequestUser(id);
         Friend friend = findFriend(requestUser, jwtUser);
@@ -53,13 +55,22 @@ public class FriendService {
         return new FriendDefaultResponseDto("200", "친구 요청 승인");
     }
 
-    public void deleteFriend(Long id, User jwtUser) {
+    public void rejectRequest(Long id, User jwtUser) {
         User requestUser = findRequestUser(id);
         Friend friend = findFriend(requestUser, jwtUser);
+        if (friend.getStatus() == RequestStatus.ACCEPTED) {
+            throw new IllegalArgumentException("이미 친구 상태입니다.");
+        }
+    }
+
+    public void deleteFriend(Long id, User jwtUser) {
+        User requestUser = findRequestUser(id);
+        Friend friend = findFriendBidirectional(requestUser, jwtUser);
         friendRepository.delete(friend);
     }
 
     // ========== 편의 메서드 ==========
+
     private User findRequestUser(Long id) {
         return userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
@@ -70,6 +81,12 @@ public class FriendService {
         return friendRepository.findByRequestUserAndResponseUser(requestUser, responseUser).orElseThrow(
                 () -> new IllegalArgumentException("친구 관계가 아닙니다.")
         );
+    }
+
+    private Friend findFriendBidirectional(User requestUser, User responseUser) {
+        return friendRepository.findByRequestUserAndResponseUser(requestUser, responseUser)
+                .or(() -> friendRepository.findByRequestUserAndResponseUser(responseUser, requestUser))
+                .orElseThrow(() -> new IllegalArgumentException("친구 관계가 아닙니다."));
     }
 
     public FriendRequestListResponseDto getFriendRequestList(User jwtUser) {
