@@ -1,5 +1,6 @@
 package com.sparta.newspeed.common;
 
+import com.sparta.newspeed.common.exception.TokenUnauthorizedException;
 import com.sparta.newspeed.domain.user.UserRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -86,8 +87,8 @@ public class JwtUtil {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        log.error("Not Found Token");
-        throw new NullPointerException("Not Found Token");
+        log.error("토큰관련 인증 에러");
+        throw new TokenUnauthorizedException("토큰을 찾을 수 없습니다.");
     }
 
     // 토큰 검증
@@ -101,7 +102,9 @@ public class JwtUtil {
             log.error("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {           // 지원되지 않는 형식의 JWT 토큰일 시
             log.error("지원되지 않는 JWT 토큰입니다.");
-        } catch (IllegalArgumentException e) {          // 잘못된 토큰이거나 토큰이 null 또는 비어있을 때
+        /*} catch (IllegalArgumentException e) {          // 잘못된 토큰이거나 토큰이 null 또는 비어있을 때
+            log.error("잘못된 JWT 토큰입니다.");*/
+        } catch (TokenUnauthorizedException e) {
             log.error("잘못된 JWT 토큰입니다.");
         }
         return false;

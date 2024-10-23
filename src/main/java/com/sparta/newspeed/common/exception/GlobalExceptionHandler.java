@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
 
 
     /* 비밀번호 관련
-    - 현재 비밀번호와는 동일한 비밀번호로 변경할 수 없습니다. PasswordMismatchException(403)
-    - 비밀번호가 일치하지 않습니다. PasswordSameException(401)
+    - 현재 비밀번호와는 동일한 비밀번호로 변경할 수 없습니다. (403)
+    - 비밀번호가 일치하지 않습니다. (401)
      */
     @ExceptionHandler(PasswordSameException.class)
     public ResponseEntity<String> handleGeneralException(PasswordSameException ex) {
@@ -42,6 +42,7 @@ public class GlobalExceptionHandler {
     - 자신이 작성한 게시물만 수정 가능합니다.
     - 댓글 작성자 또는 게시글 작성자가 아닌 경우 댓글 수정을 할 수 없습니다.
     - 친구 요청 중이 아니라면 거절 or 승인을 할 수 없습니다.
+    - 이미 친구 상태입니다.
      */
     @ExceptionHandler(ClientRequestException.class)
     public ResponseEntity<String> handleGeneralException(ClientRequestException ex) {
@@ -53,6 +54,7 @@ public class GlobalExceptionHandler {
     토큰을 찾을 수 없습니다.
     만료된 토큰입니다.
     잘못된 토큰입니다.(변조 or 파괴 or 지원되지 않는)
+    토큰에 해당하는 유저가 없습니다.
      */
     @ExceptionHandler(TokenUnauthorizedException.class)
     public ResponseEntity<String> handleGeneralException(TokenUnauthorizedException ex) {

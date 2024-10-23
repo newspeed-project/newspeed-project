@@ -1,5 +1,6 @@
 package com.sparta.newspeed.like.boardLike.service;
 
+import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.domain.like.boardLike.BoardLike;
@@ -39,7 +40,7 @@ public class BoardLikeService {
 
     private Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
-                () -> new IllegalArgumentException("Board not found")
+                () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다.")
         );
     }
 }
