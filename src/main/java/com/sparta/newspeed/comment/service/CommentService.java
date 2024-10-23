@@ -60,6 +60,7 @@ public class CommentService {
         }
         
         //댓글 내용 수정
+        comment.setContent(requestDto.getContent());
         commentRepository.save(comment);
         return new CommentOneResponseDto("200", "특정 게시물의 댓글 수정 완료", comment);
     }
