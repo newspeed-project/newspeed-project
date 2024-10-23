@@ -47,4 +47,10 @@ public class CommentController {
 
         return commentService.updateComment(commentId, requestDto, jwtUser);
     }
+
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long boardId, @PathVariable Long id, @RequestAttribute("user") User jwtUser) {
+        commentService.deleteComment(boardId, id, jwtUser);
+        return ResponseEntity.noContent().build();
+    }
 }

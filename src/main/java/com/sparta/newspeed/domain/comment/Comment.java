@@ -6,9 +6,11 @@ import com.sparta.newspeed.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "comments")
 @NoArgsConstructor
 public class Comment extends TimeStamped {
