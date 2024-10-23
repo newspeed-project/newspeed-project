@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 public class UpdateBoardRequestDto {
 
-    @NotNull
+    @NotNull(message = "제목은 필수 입력 값입니다.")
     private String title;
 
-    @NotNull
+    @NotNull(message = "내용은 필수 입력 값입니다.")
     private String content;
 }

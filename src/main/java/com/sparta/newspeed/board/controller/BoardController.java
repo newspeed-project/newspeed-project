@@ -20,7 +20,7 @@ public class BoardController {
     @GetMapping("/{id}")
     public ResponseEntity<ReadBoardResponseDto> getBoard(@PathVariable Long id) {
         ReadBoardResponseDto board = boardService.getBoardById(id);
-        return ResponseEntity.ok(board);
+        return ResponseEntity.status(HttpStatus.OK).body(board);
     }
 
     @PostMapping("")
@@ -38,13 +38,13 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<ReadAllBoardResponseDto> getAllBoards() {
         ReadAllBoardResponseDto boards = boardService.getAllBoards();
-        return ResponseEntity.ok(boards);
+        return ResponseEntity.status(HttpStatus.OK).body(boards);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBoard(@PathVariable Long id, @RequestBody @Valid DeleteBoardRequestDto reqDto, @RequestAttribute("user") User jwtUser) {
         boardService.deleteBoard(id, reqDto, jwtUser);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
 }

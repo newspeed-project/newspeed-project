@@ -3,6 +3,7 @@ package com.sparta.newspeed.domain.board;
 import com.sparta.newspeed.domain.TimeStamped;
 import com.sparta.newspeed.domain.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,10 +26,14 @@ public class Board extends TimeStamped {
     @Column(nullable = false)
     private String content;
 
-    public Board(User user , String title, String content) {
+    private Board(User user , String title, String content) {
         this.user = user;
         this.title = title;
         this.content = content;
+    }
+
+    public static Board createBoard(User jwtUser, String title, String content) {
+        return new Board(jwtUser, title, content);
     }
 
     public void update(String title, String content) {
