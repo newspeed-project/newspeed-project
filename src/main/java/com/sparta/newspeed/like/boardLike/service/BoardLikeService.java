@@ -1,8 +1,10 @@
 package com.sparta.newspeed.like.boardLike.service;
 
+import com.sparta.newspeed.common.exception.ClientRequestException;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
+import com.sparta.newspeed.domain.comment.Comment;
 import com.sparta.newspeed.domain.like.boardLike.BoardLike;
 import com.sparta.newspeed.domain.like.boardLike.BoardLikeRepository;
 import com.sparta.newspeed.domain.user.User;
@@ -21,6 +23,7 @@ public class BoardLikeService {
     public BoardLikeDefaultResponseDto likeBoard(Long boardId, User jwtUser) {
         Board board = findBoardById(boardId);
         BoardLike boardLike = BoardLike.create(board, jwtUser);
+        checkIfLikeMyself(jwtUser, board);
         boardLikeRepository.save(boardLike);
         Long count = boardLikeRepository.countAllByBoard(board);
         return new BoardLikeDefaultResponseDto("201", "좋아요 등록 성공", count);
@@ -43,5 +46,11 @@ public class BoardLikeService {
         return boardRepository.findById(boardId).orElseThrow(
                 () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다.")
         );
+    }
+
+    private void checkIfLikeMyself(User jwtUser, Board board) {
+        if (board.getUser().getId().equals(jwtUser.getId())) {
+            throw new ClientRequestException("내가 작성한 게시글에 좋아요를 달 수 없습니다.");
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.sparta.newspeed.like.commentLike.service;
 
+import com.sparta.newspeed.common.exception.ClientRequestException;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
@@ -24,6 +25,7 @@ public class CommentLikeService {
     public CommentLikeDefaultResponseDto likeComment(Long boardId, Long commentId, User jwtUser) {
         Board board = findBoardById(boardId);
         Comment comment = findCommentById(commentId);
+        checkIfLikeMyself(jwtUser, comment);
         CommentLike commentLike = CommentLike.create(comment, jwtUser);
         commentLikeRepository.save(commentLike);
         Long count = commentLikeRepository.countAllByComment(comment);
@@ -43,8 +45,8 @@ public class CommentLikeService {
         commentLikeRepository.deleteByCommentAndUser(comment, jwtUser);
     }
 
-    // ============= 편의 메서드 =============
 
+    // ============= 편의 메서드 =============
     private Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
                 () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다.")
@@ -55,5 +57,11 @@ public class CommentLikeService {
         return commentRepository.findById(commentId).orElseThrow(
                 () -> new ResourceNotFoundException("해당 댓글이 존재하지 않습니다.")
         );
+    }
+
+    private void checkIfLikeMyself(User jwtUser, Comment comment) {
+        if (comment.getUser().getId().equals(jwtUser.getId())) {
+            throw new ClientRequestException("내가 작성한 댓글에 좋아요를 달 수 없습니다.");
+        }
     }
 }
