@@ -37,7 +37,7 @@ public class FriendController {
     }
 
 
-    @PatchMapping("/friend/{id}/friend-request")
+    @PutMapping("/friend/{id}/friend-request")
     public ResponseEntity<FriendDefaultResponseDto> acceptRequest(
             @PathVariable Long id,
             @RequestAttribute("user") User jwtUser
@@ -51,7 +51,7 @@ public class FriendController {
             @PathVariable Long id,
             @RequestAttribute("user") User jwtUser
     ) {
-        friendService.deleteFriend(id, jwtUser);
+        friendService.rejectRequest(id, jwtUser);
         return ResponseEntity.noContent().build();
     }
 
