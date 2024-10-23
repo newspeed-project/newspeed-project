@@ -48,15 +48,20 @@ public class BoardService {
     public BoardListResponseDto getAllBoards(User jwtUser) {
         List<Long> friendIds = friendRepository.findAcceptedFriendIds(jwtUser.getId());
 
-        List<Board> friendBoards = boardRepository.findByUserIdIn(friendIds);
-        List<Board> nonFriendBoards = boardRepository.findByUserIdNotIn(friendIds);
+        List<Board> addBoards;
 
-        friendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
-        nonFriendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
+        if (friendIds.isEmpty()) {
+            addBoards = boardRepository.findAllByOrderByModifiedAtDesc();
+        } else {
+            List<Board> friendBoards = boardRepository.findByUserIdIn(friendIds);
+            List<Board> nonFriendBoards = boardRepository.findByUserIdNotIn(friendIds);
 
-        List<Board> addBoards = new ArrayList<>(friendBoards);
-        addBoards.addAll(nonFriendBoards);
+            friendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
+            nonFriendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
 
+            addBoards = new ArrayList<>(friendBoards);
+            addBoards.addAll(nonFriendBoards);
+        }
         return new BoardListResponseDto("200", "전체 게시물 조회 완료", addBoards);
     }
 

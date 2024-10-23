@@ -72,11 +72,15 @@ public class CommentService {
     // 댓글 삭제
     @Transactional
     public void deleteComment(Long boardId, Long id, User jwtUser) {
+        Board boardUser = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 댓글의 게시글 작성자가 존재하지않습니다."));
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 댓글이 존재하지 않습니다."));
 
-        if (comment.getBoard().getId().equals(boardId) || jwtUser.getId().equals(comment.getUser().getId())) {
+        if (boardUser.getUser().getId().equals(jwtUser.getId()) || comment.getUser().getId().equals(jwtUser.getId())) {
             commentRepository.delete(comment);
+        } else {
+            throw new ResourceNotFoundException("게시글 작성자 또는 댓글 작성자가 아닙니다.");
         }
     }
 }
