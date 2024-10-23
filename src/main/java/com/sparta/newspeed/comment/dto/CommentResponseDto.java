@@ -10,14 +10,14 @@ public class CommentResponseDto {
 
     private Long id;
 
-    private String comment;
+    private String content;
 
     private String createdAt;
     private String updatedAt;
 
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
-        this.comment = comment.getContent();
+        this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt().toString();
         this.updatedAt = comment.getModifiedAt().toString();
     }
