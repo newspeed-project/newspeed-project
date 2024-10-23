@@ -41,11 +41,11 @@ public class CommentController {
     // 3. 댓글 수정
     @PutMapping("/comments/{id}")
     public ResponseEntity<CommentOneResponseDto> updateComment(
-            @PathVariable Long commentId,
+            @PathVariable Long id,
             @Valid @RequestBody CommentRequestDto requestDto,
             @RequestAttribute("user") User jwtUser) {
 
-        CommentOneResponseDto resDto = commentService.updateComment(commentId, requestDto, jwtUser);
+        CommentOneResponseDto resDto = commentService.updateComment(id, requestDto, jwtUser);
         return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
