@@ -13,17 +13,20 @@ public class Friend {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requestUserId", nullable = false)
+    @JoinColumn(name = "request_user_id", nullable = false)
     private User requestUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "responseUserId")
+    @JoinColumn(name = "response_user_id")
     private User responseUser;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private RequestStatus status;
 
+    public void markAsDeleted() {
+        this.status = RequestStatus.DELETED;
+    }
     public void makeFriend(User jwtUser, User targetUser) {
         this.requestUser = jwtUser;
         this.responseUser = targetUser;

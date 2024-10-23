@@ -33,10 +33,12 @@ public class User extends TimeStamped {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
-  
+
+    //유저의 활성/탈퇴 여부 관리
     @Column(nullable = false)
     private boolean active = true;
 
+    //탈퇴일 기록
     private LocalDateTime deleteDate;
   
     public void signup(String email, String password, String username, UserRole role) {
@@ -55,4 +57,10 @@ public class User extends TimeStamped {
         this.deleteDate = LocalDateTime.now();
         this.active = false;
     }
+
+    // 유저 활성 상태 체크
+    public boolean isActive() {
+        return this.active;
+    }
+
 }

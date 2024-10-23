@@ -56,6 +56,6 @@ public class UserController {
     @DeleteMapping("/user")
     public ResponseEntity<Void> deleteUser(@Valid @RequestBody DeleteRequestDto reqDto, @RequestAttribute("user") User jwtUser) {
         userService.deleteUser(reqDto, jwtUser);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); //상태 코드 204 반환
     }
 }
