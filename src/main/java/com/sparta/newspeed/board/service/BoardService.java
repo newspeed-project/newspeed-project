@@ -11,9 +11,12 @@ import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.sparta.newspeed.domain.friend.Friend;
 
 import java.util.*;
 
@@ -45,22 +48,24 @@ public class BoardService {
         return new BoardOneResponseDto("200", "특정 게시물 조회 완료", board);
     }
 
-    public BoardListResponseDto getAllBoards(User jwtUser) {
+    public BoardListResponseDto getAllBoards(User jwtUser, int page) {
         List<Long> friendIds = friendRepository.findAcceptedFriendIds(jwtUser.getId());
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
 
         List<Board> addBoards;
 
         if (friendIds.isEmpty()) {
-            addBoards = boardRepository.findAllByOrderByModifiedAtDesc();
+            Page<Board> nonFriendBoards = boardRepository.findAll(pageable);
+            addBoards = nonFriendBoards.getContent();
         } else {
             List<Board> friendBoards = boardRepository.findByUserIdIn(friendIds);
-            List<Board> nonFriendBoards = boardRepository.findByUserIdNotIn(friendIds);
-
             friendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
-            nonFriendBoards.sort(Comparator.comparing(Board::getModifiedAt).reversed());
+
+            int remainingSlots = 10 - friendBoards.size();
+            Page<Board> nonFriendBoardsPage = boardRepository.findByUserIdNotIn(friendIds, PageRequest.of(0, remainingSlots, Sort.by("modifiedAt").descending()));
 
             addBoards = new ArrayList<>(friendBoards);
-            addBoards.addAll(nonFriendBoards);
+            addBoards.addAll(nonFriendBoardsPage.getContent());
         }
         return new BoardListResponseDto("200", "전체 게시물 조회 완료", addBoards);
     }
