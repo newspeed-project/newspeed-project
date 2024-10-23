@@ -3,11 +3,15 @@ package com.sparta.newspeed.comment.controller;
 import com.sparta.newspeed.comment.dto.CommentRequestDto;
 import com.sparta.newspeed.comment.dto.ReadAllCommentResponseDto;
 
+
 import com.sparta.newspeed.domain.comment.Comment;
 import com.sparta.newspeed.comment.service.CommentService;
 import com.sparta.newspeed.domain.user.User;
 import jakarta.validation.Valid;
+
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +42,7 @@ public class CommentController {
         return ResponseEntity.ok(comments);
     }
 
+
     // 3. 댓글 수정
     @PutMapping("/comments/{id}")
     public Comment updateComment(
@@ -48,3 +53,12 @@ public class CommentController {
         return commentService.updateComment(commentId, requestDto, jwtUser);
     }
 }
+
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long boardId, @PathVariable Long id, @RequestAttribute("user") User jwtUser) {
+        commentService.deleteComment(boardId, id, jwtUser);
+        return ResponseEntity.noContent().build();
+    }
+
+}
+

@@ -1,5 +1,6 @@
 package com.sparta.newspeed.user.controller;
 
+import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.user.dto.*;
 import com.sparta.newspeed.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,15 +49,15 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/user/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody ProfileUpdateDto reqDto) {
-        UserResponseDto user = userService.updateUser(id, reqDto);
+    @PutMapping("/user")
+    public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody ProfileUpdateDto reqDto, @RequestAttribute("user") User jwtUser) {
+        UserResponseDto user = userService.updateUser(reqDto, jwtUser);
         return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping("/user/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id, @Valid @RequestBody DeleteRequestDto reqDto) {
-        userService.deleteUser(id, reqDto);
+    @DeleteMapping("/user")
+    public ResponseEntity<Void> deleteUser(@Valid @RequestBody DeleteRequestDto reqDto, @RequestAttribute("user") User jwtUser) {
+        userService.deleteUser(reqDto, jwtUser);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

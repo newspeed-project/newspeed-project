@@ -80,28 +80,20 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUser(Long id, ProfileUpdateDto reqDto) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
-        );
-
-        checkIfPasswordMatches(user, reqDto.getPassword());
-        checkIfPasswordSameAsBefore(user, reqDto.getNewPassword());
+    public UserResponseDto updateUser(ProfileUpdateDto reqDto, User jwtUser) {
+        checkIfPasswordMatches(jwtUser, reqDto.getPassword());
+        checkIfPasswordSameAsBefore(jwtUser, reqDto.getNewPassword());
 
         reqDto.initPassword(passwordEncoder.encode(reqDto.getNewPassword()));
 
-        user.update(reqDto.getNewPassword(), reqDto.getEmail());
-        return new UserResponseDto(user);
+        jwtUser.update(reqDto.getNewPassword(), reqDto.getEmail());
+        return new UserResponseDto(jwtUser);
     }
 
     @Transactional
-    public void deleteUser(Long id, DeleteRequestDto reqDto) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
-        );
-
-        checkIfPasswordMatches(user, reqDto.getPassword());
-        user.delete();      // 유저 Entity 삭제 관련 필드만 수정. 나머지 모든 데이터는 유지
+    public void deleteUser(DeleteRequestDto reqDto, User jwtUser) {
+        checkIfPasswordMatches(jwtUser, reqDto.getPassword());
+        jwtUser.delete();      // 유저 Entity 삭제 관련 필드만 수정. 나머지 모든 데이터는 유지
     }
 
     // ========== 편의 메서드 ==========
