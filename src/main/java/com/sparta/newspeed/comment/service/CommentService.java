@@ -37,9 +37,9 @@ public class CommentService {
         Comment comment = new Comment();
         comment.saveComment(requestDto.getContent(), board, jwtUser);
 
-        Comment savedComment = commentRepository.save(comment);
+        commentRepository.save(comment);
 
-        return new CommentResponseDto(savedComment);  // DTO로 변환하여 반환
+        return new CommentResponseDto(comment);  // DTO로 변환하여 반환
     }
 
     //댓글 조회
@@ -60,9 +60,8 @@ public class CommentService {
         }
         
         //댓글 내용 수정
-        comment.setContent(requestDto.getContent());
-
-        return updateComment(commentId, requestDto, jwtUser);  // DTO로 변환하여 반환
+        commentRepository.save(comment);
+        return new CommentResponseDto(comment);
     }
     // 권한 확인 메서드: 댓글 작성자 또는 게시글 작성자인지 확인
     private boolean isAuthorizedToModifyOrDelete(Comment comment, User jwtUser) {
