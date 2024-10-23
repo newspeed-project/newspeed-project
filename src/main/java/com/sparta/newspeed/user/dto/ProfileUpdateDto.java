@@ -18,7 +18,7 @@ public class ProfileUpdateDto {
     message = "숫자, 문자, 특수문자가 1개 이상 사용되어야 함, 길이: 8 ~ 16")
     public String newPassword;
 
-    public void initPassword(String newPassword) {
-        this.newPassword = newPassword;
+    public void initPassword(String encodedPassword) {
+        this.newPassword = encodedPassword;
     }
 }
