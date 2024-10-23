@@ -30,8 +30,8 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<BoardListResponseDto> getAllBoards(@RequestAttribute("user") User jwtUser) {
-        BoardListResponseDto boards = boardService.getAllBoards(jwtUser);
+    public ResponseEntity<BoardListResponseDto> getAllBoards(@RequestAttribute("user") User jwtUser, @RequestParam(defaultValue = "0") int page) {
+        BoardListResponseDto boards = boardService.getAllBoards(jwtUser, page);
         return ResponseEntity.ok(boards);
     }
 
