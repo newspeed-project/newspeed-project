@@ -2,6 +2,7 @@ package com.sparta.newspeed.friend.controller;
 
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.friend.dto.FriendListResponseDto;
+import com.sparta.newspeed.friend.dto.FriendRequestListResponseDto;
 import com.sparta.newspeed.friend.dto.FriendRequestDto;
 import com.sparta.newspeed.friend.dto.FriendDefaultResponseDto;
 import com.sparta.newspeed.friend.service.FriendService;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,5 +62,11 @@ public class FriendController {
     ) {
         friendService.deleteFriend(id, jwtUser);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/friend-request")
+    public ResponseEntity<FriendRequestListResponseDto> getFriendRequestList(@RequestAttribute("user") User jwtUser) {
+        FriendRequestListResponseDto friendRequestList = friendService.getFriendRequestList(jwtUser);
+        return ResponseEntity.status(HttpStatus.OK).body(friendRequestList);
     }
 }

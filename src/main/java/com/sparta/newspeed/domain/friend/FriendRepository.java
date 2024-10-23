@@ -28,4 +28,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     Optional<Friend> findByRequestUserAndResponseUser(User requestUser, User responseUser);
 
+    List<Friend> findByResponseUserAndStatus(User responseUser, RequestStatus status);
+
 }

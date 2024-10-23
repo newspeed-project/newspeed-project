@@ -16,5 +16,4 @@ public class FriendResponseDto {
         this.username = user.getUsername();
         this.email = user.getEmail();
     }
-
 }
