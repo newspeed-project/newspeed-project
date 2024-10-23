@@ -1,5 +1,6 @@
 package com.sparta.newspeed.friend.service;
 
+import com.sparta.newspeed.common.exception.ClientRequestException;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.friend.Friend;
 import com.sparta.newspeed.domain.friend.FriendRepository;
@@ -40,7 +41,7 @@ public class FriendService {
 
         List<User> friends = friendIds.stream()
                 .map(friendId -> userRepository.findById(friendId)
-                        .orElseThrow(() -> new IllegalArgumentException("친구 ID가 잘못되었습니다.")))
+                        .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 친구 ID입니다.")))
                 .toList();
 
         return new FriendListResponseDto("200", "친구 목록 조회 완료", friends);
@@ -59,7 +60,7 @@ public class FriendService {
         User requestUser = findRequestUser(id);
         Friend friend = findFriend(requestUser, jwtUser);
         if (friend.getStatus() == RequestStatus.ACCEPTED) {
-            throw new IllegalArgumentException("이미 친구 상태입니다.");
+            throw new ClientRequestException("이미 친구 상태입니다.");
         }
     }
 
@@ -73,20 +74,20 @@ public class FriendService {
 
     private User findRequestUser(Long id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+                () -> new ResourceNotFoundException("해당하는 유저가 없습니다.")
         );
     }
 
     private Friend findFriend(User requestUser, User responseUser) {
         return friendRepository.findByRequestUserAndResponseUser(requestUser, responseUser).orElseThrow(
-                () -> new IllegalArgumentException("친구 관계가 아닙니다.")
+                () -> new ResourceNotFoundException("친구 관계가 아닙니다.")
         );
     }
 
     private Friend findFriendBidirectional(User requestUser, User responseUser) {
         return friendRepository.findByRequestUserAndResponseUser(requestUser, responseUser)
                 .or(() -> friendRepository.findByRequestUserAndResponseUser(responseUser, requestUser))
-                .orElseThrow(() -> new IllegalArgumentException("친구 관계가 아닙니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("친구 관계가 아닙니다."));
     }
 
     public FriendRequestListResponseDto getFriendRequestList(User jwtUser) {

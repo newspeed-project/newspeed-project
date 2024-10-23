@@ -1,5 +1,6 @@
 package com.sparta.newspeed.like.commentLike.service;
 
+import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.domain.comment.Comment;
@@ -45,13 +46,13 @@ public class CommentLikeService {
 
     private Board findBoardById(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
-                () -> new IllegalArgumentException("Board not found")
+                () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다.")
         );
     }
 
     private Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("Board not found")
+                () -> new ResourceNotFoundException("해당 댓글이 존재하지 않습니다.")
         );
     }
 }

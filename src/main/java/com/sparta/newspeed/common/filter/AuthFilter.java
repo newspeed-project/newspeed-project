@@ -1,6 +1,8 @@
 package com.sparta.newspeed.common.filter;
 
 import com.sparta.newspeed.common.JwtUtil;
+import com.sparta.newspeed.common.exception.ResourceNotFoundException;
+import com.sparta.newspeed.common.exception.TokenUnauthorizedException;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -47,20 +49,20 @@ public class AuthFilter implements Filter {
                 // 토큰 검증
 
                 if (!jwtUtil.validateToken(token)) {
-                    throw new IllegalArgumentException("Token Error");
+                    throw new TokenUnauthorizedException("잘못된 토큰입니다.");
                 }
 
                 // 토큰에서 사용자 정보 가져오기
                 Claims info = jwtUtil.getUserInfoFromToken(token);
 
                 User user = userRepository.findByUsername(info.getSubject()).orElseThrow(() ->
-                        new NullPointerException("Not Found User")
+                        new TokenUnauthorizedException("토큰에 해당하는 유저가 없습니다.")
                 );
 
                 request.setAttribute("user", user);
                 chain.doFilter(request, response); // 다음 Filter 로 이동
             } else {
-                throw new IllegalArgumentException("Not Found Token");
+                throw new TokenUnauthorizedException("토큰을 찾을 수 없습니다.");
             }
         }
     }

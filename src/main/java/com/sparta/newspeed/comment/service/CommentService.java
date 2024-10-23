@@ -3,6 +3,7 @@ package com.sparta.newspeed.comment.service;
 import com.sparta.newspeed.comment.dto.CommentRequestDto;
 import com.sparta.newspeed.comment.dto.CommentResponseDto;
 import com.sparta.newspeed.comment.dto.ReadAllCommentResponseDto;
+import com.sparta.newspeed.common.exception.ClientRequestException;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
@@ -56,7 +57,7 @@ public class CommentService {
 
         // 권한 검증: 댓글 작성자 또는 게시글 작성자만 수정 가능
         if (!isAuthorizedToModifyOrDelete(comment, jwtUser)) {
-            throw new IllegalArgumentException("댓글 수정 권한이 없습니다.");
+            throw new ClientRequestException("댓글 작성자 또는 게시글 작성자가 아닌 경우 댓글 수정을 할 수 없습니다.");
         }
         
         //댓글 내용 수정

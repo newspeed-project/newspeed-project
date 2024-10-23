@@ -2,6 +2,8 @@ package com.sparta.newspeed.board.service;
 
 import com.sparta.newspeed.board.dto.*;
 import com.sparta.newspeed.common.PasswordEncoder;
+import com.sparta.newspeed.common.exception.ClientRequestException;
+import com.sparta.newspeed.common.exception.PasswordMismatchException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.domain.user.User;
@@ -48,13 +50,14 @@ public class BoardService {
     @Transactional
     public EditBoardResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto, User jwtUser) {
 
-        Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다."));
         board.update(
                 reqDto.getTitle(),
                 reqDto.getContent()
         );
         if (!board.getUser().getId().equals(jwtUser.getId()))
-            throw new IllegalArgumentException("자신이 작성한 게시물만 수정 가능합니다.");
+            throw new ClientRequestException("자신이 작성한 게시물만 수정 가능합니다.");
 
         return new EditBoardResponseDto("200", "게시물 수정 완료", board);
     }
@@ -63,10 +66,11 @@ public class BoardService {
     public void deleteBoard(Long id, DeleteBoardRequestDto reqDto, User jwtUser) {
 
 
-        Board board = boardRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다."));
 
         if (!board.getUser().getId().equals(jwtUser.getId()))
-            throw new IllegalArgumentException("자신이 작성한 게시물만 수정 가능합니다.");
+            throw new ClientRequestException("자신이 작성한 게시물만 수정 가능합니다.");
 
         checkUserPassword(reqDto.getPassword(), jwtUser);
 
@@ -75,6 +79,6 @@ public class BoardService {
 
     private void checkUserPassword (String password, User user) {
         if (!passwordEncoder.matches(password, user.getPassword()))
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
     }
 }

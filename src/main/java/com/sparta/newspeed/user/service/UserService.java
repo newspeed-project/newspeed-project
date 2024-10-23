@@ -2,6 +2,10 @@ package com.sparta.newspeed.user.service;
 
 import com.sparta.newspeed.common.JwtUtil;
 import com.sparta.newspeed.common.PasswordEncoder;
+import com.sparta.newspeed.common.exception.ClientRequestException;
+import com.sparta.newspeed.common.exception.PasswordMismatchException;
+import com.sparta.newspeed.common.exception.PasswordSameException;
+import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
 import com.sparta.newspeed.domain.user.UserRole;
@@ -47,11 +51,11 @@ public class UserService {
 
     public LoginResponseDto login(@Valid LoginRequestDto reqDto, HttpServletResponse res) {
         User user = userRepository.findByUsername(reqDto.getUsername()).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+                () -> new ResourceNotFoundException("해당하는 유저가 없습니다.")
         );
 
         if (user.isActive() == false) {
-            throw new IllegalArgumentException("탈퇴한 유저입니다.");
+            throw new ClientRequestException("탈퇴한 유저입니다.");
         }
 
         checkIfPasswordMatches(user, reqDto.getPassword());
@@ -69,7 +73,7 @@ public class UserService {
 
     public UserOneResponseDto getUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당하는 유저가 없습니다.")
+                () -> new ResourceNotFoundException("해당하는 유저가 없습니다.")
         );
         return new UserOneResponseDto("200", "특정 유저 조회 성공", user);
     }
@@ -96,19 +100,19 @@ public class UserService {
     private void checkIfPreviousUserExists(String username) {
         Long countPreviousUser = userRepository.countAllByUsername(username);
         if (countPreviousUser != 0) {
-            throw new IllegalArgumentException("중복된 아이디입니다.");
+            throw new ClientRequestException("중복된 아이디입니다.");
         }
     }
 
     private void checkIfPasswordMatches(User user, String password) {
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
         }
     }
 
     private void checkIfPasswordSameAsBefore(User user, String newPassword) {
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호와는 동일한 비밀번호로 변경할 수 없습니다.");
+            throw new PasswordSameException("현재 비밀번호와는 동일한 비밀번호로 변경할 수 없습니다.");
         }
     }
 }
