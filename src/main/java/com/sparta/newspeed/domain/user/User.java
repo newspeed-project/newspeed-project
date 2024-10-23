@@ -48,7 +48,7 @@ public class User extends TimeStamped {
   
     public void update(String newPassword, String newEmail) {
         this.password = newPassword;
-        this.username = newEmail;
+        this.email = newEmail;
     }
 
     public void delete() {

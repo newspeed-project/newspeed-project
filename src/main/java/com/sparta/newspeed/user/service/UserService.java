@@ -67,7 +67,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserListResponseDto getAllUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAllByActiveTrue();
         return new UserListResponseDto("200", "전체 유저 조회 성공", users);
     }
 
@@ -75,6 +75,10 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("해당하는 유저가 없습니다.")
         );
+
+        if (user.isActive() == false) {
+            throw new ClientRequestException("탈퇴한 유저입니다.");
+        }
         return new UserOneResponseDto("200", "특정 유저 조회 성공", user);
     }
 
@@ -82,10 +86,9 @@ public class UserService {
     public UserOneResponseDto updateUser(ProfileUpdateDto reqDto, User jwtUser) {
         checkIfPasswordMatches(jwtUser, reqDto.getPassword());
         checkIfPasswordSameAsBefore(jwtUser, reqDto.getNewPassword());
-
         reqDto.initPassword(passwordEncoder.encode(reqDto.getNewPassword()));
-
         jwtUser.update(reqDto.getNewPassword(), reqDto.getEmail());
+        userRepository.save(jwtUser);
         return new UserOneResponseDto("200", "유저 정보 수정 성공", jwtUser);
     }
 
@@ -93,6 +96,7 @@ public class UserService {
     public void deleteUser(DeleteRequestDto reqDto, User jwtUser) {
         checkIfPasswordMatches(jwtUser, reqDto.getPassword());
         jwtUser.delete();      // 유저 Entity 삭제 관련 필드만 수정. 나머지 모든 데이터는 유지
+        userRepository.save(jwtUser);
     }
 
     // ========== 편의 메서드 ==========
