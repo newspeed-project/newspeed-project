@@ -1,6 +1,7 @@
 package com.sparta.newspeed.board.service;
 
 import com.sparta.newspeed.board.dto.*;
+import com.sparta.newspeed.comment.dto.LikeResponseDto;
 import com.sparta.newspeed.common.PasswordEncoder;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -77,4 +79,49 @@ public class BoardService {
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
+
+
+    @Transactional
+    public LikeResponseDto addLikeToBoard(Long boardId, User jwtUser) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ResourceNotFoundException("게시물이 존재하지 않습니다."));
+
+        // 이미 좋아요를 눌렀는지 확인
+        if (board.getLikedByUsers().contains(jwtUser)) {
+            throw new IllegalArgumentException("이미 좋아요를 누른 게시물입니다.");
+        }
+
+        board.addLike(jwtUser); // 사용자 추가
+        board.incrementLikeCount(); // 좋아요 수 증가
+        boardRepository.save(board); // 변경 사항 저장
+
+        return new LikeResponseDto(board.getId(), board.getLikeCount(), true);
+    }
+
+
+    // 게시물 좋아요 취소
+    @Transactional
+    public LikeResponseDto unlikeBoard(Long boardId, User jwtUser) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 게시물이 존재하지 않습니다."));
+
+        // 좋아요를 누르지 않았으면 예외 발생
+        if (!board.getLikedByUsers().contains(jwtUser)) {
+            throw new IllegalArgumentException("좋아요를 누르지 않은 게시물입니다.");
+        }
+
+        board.removeLike(jwtUser); // 사용자 제거
+        board.decrementLikeCount(); // 좋아요 수 감소
+        boardRepository.save(board); // 변경 사항 저장
+
+        return new LikeResponseDto(board.getId(), board.getLikeCount(),false);
+    }
+
+    // 게시물 좋아요 조회
+    public List<User> getLikedUsers(Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ResourceNotFoundException("게시물이 존재하지 않습니다."));
+        return new ArrayList<>(board.getLikedByUsers()); // 좋아요를 누른 사용자 목록 반환
+    }
+
 }

@@ -2,6 +2,7 @@ package com.sparta.newspeed.comment.service;
 
 import com.sparta.newspeed.comment.dto.CommentRequestDto;
 import com.sparta.newspeed.comment.dto.CommentResponseDto;
+import com.sparta.newspeed.comment.dto.LikeResponseDto;
 import com.sparta.newspeed.comment.dto.ReadAllCommentResponseDto;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.board.Board;
@@ -14,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
@@ -78,4 +80,50 @@ public class CommentService {
             commentRepository.delete(comment);
         }
     }
+
+
+    // 댓글 좋아요 등록
+    @Transactional
+    public LikeResponseDto addLikeToComment(Long commentId, User jwtUser) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("댓글이 존재하지 않습니다."));
+
+        // 사용자가 이미 좋아요를 누른 경우 예외 처리
+        if (comment.getLikedByUsers().contains(jwtUser)) {
+            throw new IllegalArgumentException("이미 좋아요를 누른 댓글입니다.");
+        }
+        comment.addLike(jwtUser); // 사용자 추가
+        comment.incrementLikeCount(); // 좋아요 수 증가
+
+        return new LikeResponseDto(comment.getId(),  comment.getLikeCount(), true);
+    }
+
+
+    //댓글 좋아요 취소
+    @Transactional
+    public LikeResponseDto unlikeComment(Long commentId, User jwtUser) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 댓글이 존재하지 않습니다."));
+
+        // 좋아요 취소
+        if (!comment.getLikedByUsers().contains(jwtUser)) {
+            throw new IllegalArgumentException("좋아요를 누르지 않은 댓글입니다.");
+        }
+
+        // 좋아요 제거
+        comment.removeLike(jwtUser); // 사용자 제거
+        comment.decrementLikeCount(); // 좋아요 수 감소
+        commentRepository.save(comment); // 저장
+
+
+        return new LikeResponseDto(comment.getId(), comment.getLikeCount(), false);
+    }
+
+    // 댓글 좋아요 조회
+    public List<User> getLikedUsers(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("댓글이 존재하지 않습니다."));
+        return new ArrayList<>(comment.getLikedByUsers()); // 좋아요를 누른 사용자 목록 반환
+    }
+
 }
