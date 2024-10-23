@@ -8,7 +8,6 @@ import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.domain.comment.Comment;
 import com.sparta.newspeed.domain.comment.CommentRepository;
 import com.sparta.newspeed.domain.user.User;
-import com.sparta.newspeed.domain.user.UserRepository;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,12 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
 
-    public CommentService(CommentRepository commentRepository, BoardRepository boardRepository, UserRepository userRepository) {
+
+    public CommentService(CommentRepository commentRepository, BoardRepository boardRepository) {
         this.commentRepository = commentRepository;
         this.boardRepository = boardRepository;
-        this.userRepository = userRepository;
+
     }
 
     //댓글 생성
@@ -69,6 +68,7 @@ public class CommentService {
         return jwtUser.getId().equals(comment.getUser().getId()) ||
                 jwtUser.getId().equals(comment.getBoard().getUser().getId());
     }
+    // 댓글 삭제
     @Transactional
     public void deleteComment(Long boardId, Long id, User jwtUser) {
         Comment comment = commentRepository.findById(id)
