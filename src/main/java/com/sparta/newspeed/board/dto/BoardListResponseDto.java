@@ -9,13 +9,13 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class ReadAllBoardResponseDto {
+public class BoardListResponseDto {
 
     private String httpStatusCode;
     private String message;
     private List<BoardResponseDto> data;
 
-    public ReadAllBoardResponseDto(String httpStatusCode, String message, List<Board> boards) {
+    public BoardListResponseDto(String httpStatusCode, String message, List<Board> boards) {
         this.httpStatusCode = httpStatusCode;
         this.message = message;
         this.data = boards.stream()

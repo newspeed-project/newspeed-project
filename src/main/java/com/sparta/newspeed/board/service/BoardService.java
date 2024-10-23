@@ -21,7 +21,7 @@ public class BoardService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public CreateBoardResponseDto createBoard(UpdateBoardRequestDto reqDto, User jwtUser) {
+    public BoardOneResponseDto createBoard(UpdateBoardRequestDto reqDto, User jwtUser) {
 
         Board board = new Board(
                 jwtUser,
@@ -31,18 +31,18 @@ public class BoardService {
 
         boardRepository.save(board);
 
-        return new CreateBoardResponseDto("201", "게시물 생성 완료", board);
+        return new BoardOneResponseDto("201", "게시물 생성 완료", board);
     }
 
-    public ReadBoardResponseDto getBoardById(Long id) {
+    public BoardOneResponseDto getBoardById(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다."));
-        return new ReadBoardResponseDto("200", "특정 게시물 조회 완료", board);
+        return new BoardOneResponseDto("200", "특정 게시물 조회 완료", board);
     }
 
-    public ReadAllBoardResponseDto getAllBoards() {
+    public BoardListResponseDto getAllBoards() {
         List<Board> boards = boardRepository.findAll();
-        return new ReadAllBoardResponseDto("200", "전체 게시물 조회 완료", boards);
+        return new BoardListResponseDto("200", "전체 게시물 조회 완료", boards);
     }
 
     @Transactional
