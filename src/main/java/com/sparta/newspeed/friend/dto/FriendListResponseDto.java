@@ -1,6 +1,6 @@
 package com.sparta.newspeed.friend.dto;
 
-import com.sparta.newspeed.user.dto.UserResponseDto;
+import com.sparta.newspeed.domain.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +11,13 @@ import java.util.List;
 public class FriendListResponseDto {
     private String httpStatusCode;
     private String message;
-    private List<UserResponseDto> data;
+    private List<FriendResponseDto> data;
 
-    public FriendListResponseDto(String httpStatusCode, String message, List<UserResponseDto> data) {
+    public FriendListResponseDto(String httpStatusCode, String message, List<User> users) {
         this.httpStatusCode = httpStatusCode;
         this.message = message;
-        this.data = data;
+        this.data = users.stream()
+                .map(FriendResponseDto::new)
+                .toList();
     }
 }

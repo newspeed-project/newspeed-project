@@ -3,6 +3,7 @@ package com.sparta.newspeed.friend.controller;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.friend.dto.FriendListResponseDto;
 import com.sparta.newspeed.friend.dto.FriendRequestDto;
+import com.sparta.newspeed.friend.dto.FriendDefaultResponseDto;
 import com.sparta.newspeed.friend.service.FriendService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,12 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping("/friend-request")
-    public ResponseEntity<Void> sendRequest(
+    public ResponseEntity<FriendDefaultResponseDto> sendRequest(
             @Valid @RequestBody FriendRequestDto reqDto,
             @RequestAttribute("user") User jwtUser
     ) {
-        friendService.sendRequest(reqDto, jwtUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        FriendDefaultResponseDto resDto = friendService.sendRequest(reqDto, jwtUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resDto);
     }
 
     @GetMapping("/friend")
@@ -34,12 +35,12 @@ public class FriendController {
 
 
     @PatchMapping("/friend/{id}/friend-request")
-    public ResponseEntity<Void> acceptRequest(
+    public ResponseEntity<FriendDefaultResponseDto> acceptRequest(
             @PathVariable Long id,
             @RequestAttribute("user") User jwtUser
     ) {
-        friendService.acceptRequest(id, jwtUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        FriendDefaultResponseDto resDto = friendService.acceptRequest(id, jwtUser);
+        return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
     @DeleteMapping("/friend/{id}/friend-request")
@@ -48,7 +49,7 @@ public class FriendController {
             @RequestAttribute("user") User jwtUser
     ) {
         friendService.deleteFriend(id, jwtUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/friend/{id}")
@@ -57,6 +58,6 @@ public class FriendController {
             @RequestAttribute("user") User jwtUser
     ) {
         friendService.deleteFriend(id, jwtUser);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }

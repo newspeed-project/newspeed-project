@@ -7,7 +7,7 @@ import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
 import com.sparta.newspeed.friend.dto.FriendListResponseDto;
 import com.sparta.newspeed.friend.dto.FriendRequestDto;
-import com.sparta.newspeed.user.dto.UserResponseDto;
+import com.sparta.newspeed.friend.dto.FriendDefaultResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +20,14 @@ public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
 
-    public void sendRequest(FriendRequestDto reqDto, User jwtUser) {
+    public FriendDefaultResponseDto sendRequest(FriendRequestDto reqDto, User jwtUser) {
         User targetUser = findRequestUser(reqDto.getFriendId());
 
         Friend friend = new Friend();
         friend.makeFriend(jwtUser, targetUser);
         friendRepository.save(friend);
+
+        return new FriendDefaultResponseDto("201", "친구 요청 성공");
     }
 
     public FriendListResponseDto getFriendList(User jwtUser) {
@@ -36,16 +38,15 @@ public class FriendService {
                         .orElseThrow(() -> new IllegalArgumentException("친구 ID가 잘못되었습니다.")))
                 .toList();
 
-        List<UserResponseDto> resDto = friends.stream()
-                .map(UserResponseDto::new)
-                .toList();
-        return new FriendListResponseDto("200", "친구 목록 조회 완료", resDto);
+        return new FriendListResponseDto("200", "친구 목록 조회 완료", friends);
     }
 
-    public void acceptRequest(Long id, User jwtUser) {
+    public FriendDefaultResponseDto acceptRequest(Long id, User jwtUser) {
         User requestUser = findRequestUser(id);
         Friend friend = findFriend(requestUser, jwtUser);
         friend.accept();
+
+        return new FriendDefaultResponseDto("200", "친구 요청 승인");
     }
 
     public void deleteFriend(Long id, User jwtUser) {
