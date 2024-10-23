@@ -11,7 +11,6 @@ public class BoardRequestDto {
 
     // private User user;
 
-    @NotBlank
     private String title;
 
     private String content;

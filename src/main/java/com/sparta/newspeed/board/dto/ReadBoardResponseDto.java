@@ -1,19 +1,20 @@
 package com.sparta.newspeed.board.dto;
 
+import com.sparta.newspeed.domain.board.Board;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CreateBoardResponseDto {
+public class ReadBoardResponseDto {
 
     private String httpStatusCode;
     private String message;
-    private Long id;
+    private BoardResponseDto data;
 
-    public CreateBoardResponseDto(String httpStatusCode, String message, Long id) {
+    public ReadBoardResponseDto(String httpStatusCode, String message, Board board) {
         this.httpStatusCode = httpStatusCode;
         this.message = message;
-        this.id = id;
+        this.data = new BoardResponseDto(board);
     }
 }

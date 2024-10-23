@@ -1,12 +1,14 @@
 package com.sparta.newspeed.comment.controller;
 
 import com.sparta.newspeed.comment.dto.CommentRequestDto;
-import com.sparta.newspeed.common.exception.ResourceNotFoundException;
-import com.sparta.newspeed.domain.board.Board;
+import com.sparta.newspeed.comment.dto.ReadAllCommentResponseDto;
+
 import com.sparta.newspeed.domain.comment.Comment;
 import com.sparta.newspeed.comment.service.CommentService;
+import com.sparta.newspeed.domain.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -24,18 +26,25 @@ public class CommentController {
     @PostMapping("/comments")
     public Comment saveComment(
             @PathVariable Long boardId,
-            @Valid @RequestBody CommentRequestDto requestDto) {
-        return commentService.saveComment(boardId, requestDto);
+            @Valid @RequestBody CommentRequestDto requestDto,
+            @RequestAttribute("user") User jwtUser) {
+        return commentService.saveComment(boardId, requestDto, jwtUser);
     }
 
-
+    //2. 댓글 조회
+    @GetMapping("/comments")
+    public ResponseEntity<ReadAllCommentResponseDto> getComments(@PathVariable Long boardId) {
+        ReadAllCommentResponseDto comments = commentService.getCommentsByBoardId(boardId);
+        return ResponseEntity.ok(comments);
+    }
 
     // 3. 댓글 수정
     @PutMapping("/comments/{id}")
     public Comment updateComment(
             @PathVariable Long commentId,
-            @Valid @RequestBody CommentRequestDto requestDto) {
+            @Valid @RequestBody CommentRequestDto requestDto,
+            @RequestAttribute("user") User jwtUser) {
 
-        return commentService.updateComment(commentId, requestDto);
+        return commentService.updateComment(commentId, requestDto, jwtUser);
     }
 }

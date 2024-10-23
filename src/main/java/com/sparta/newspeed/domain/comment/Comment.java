@@ -29,8 +29,9 @@ public class Comment extends TimeStamped {
     @Column(nullable = false)
     private String content;
 
-    public void saveComment(String content, Board board) {
+    public void saveComment(String content, Board board, User jwtUser) {
         this.content = content;
         this.board = board;
+        this.user = jwtUser;
     }
 }
