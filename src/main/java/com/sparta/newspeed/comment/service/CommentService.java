@@ -58,10 +58,8 @@ public class CommentService {
         if (!isAuthorizedToModifyOrDelete(comment, jwtUser)) {
             throw new ClientRequestException("댓글 작성자 또는 게시글 작성자가 아닌 경우 댓글 수정을 할 수 없습니다.");
         }
-        
-        //댓글 내용 수정
-        comment.setContent(requestDto.getContent());
-        commentRepository.save(comment);
+        comment.update(requestDto.getContent());
+
         return new CommentOneResponseDto("200", "특정 게시물의 댓글 수정 완료", comment);
     }
     // 권한 확인 메서드: 댓글 작성자 또는 게시글 작성자인지 확인

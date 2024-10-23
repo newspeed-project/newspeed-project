@@ -4,6 +4,7 @@ import com.sparta.newspeed.domain.TimeStamped;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,5 +34,9 @@ public class Comment extends TimeStamped {
         this.content = content;
         this.board = board;
         this.user = jwtUser;
+    }
+
+    public void update(String content) {
+        this.content = content;
     }
 }
