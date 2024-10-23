@@ -2,8 +2,10 @@ package com.sparta.newspeed.user.dto;
 
 import com.sparta.newspeed.domain.user.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserResponseDto {
     private Long id;
     private String username;

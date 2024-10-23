@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -20,44 +18,44 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<UserResponseDto> signup(
+    public ResponseEntity<UserOneResponseDto> signup(
             @Valid @RequestBody UserRequestDto userRequestDto,
             HttpServletResponse response
     ) {
-        UserResponseDto user = userService.createUser(userRequestDto, response);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        UserOneResponseDto resDto = userService.createUser(userRequestDto, response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resDto);
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<UserResponseDto> login(
+    public ResponseEntity<LoginResponseDto> login(
             @Valid @RequestBody LoginRequestDto reqDto,
             HttpServletResponse response
     ) {
-        UserResponseDto user = userService.login(reqDto, response);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        LoginResponseDto resDto = userService.login(reqDto, response);
+        return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        List<UserResponseDto> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public ResponseEntity<UserListResponseDto> getAllUsers() {
+        UserListResponseDto resDto = userService.getAllUsers();
+        return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
-        UserResponseDto user = userService.getUser(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<UserOneResponseDto> getUser(@PathVariable Long id) {
+        UserOneResponseDto resDto = userService.getUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
     @PutMapping("/user")
-    public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody ProfileUpdateDto reqDto, @RequestAttribute("user") User jwtUser) {
-        UserResponseDto user = userService.updateUser(reqDto, jwtUser);
-        return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
+    public ResponseEntity<UserOneResponseDto> updateUser(@Valid @RequestBody ProfileUpdateDto reqDto, @RequestAttribute("user") User jwtUser) {
+        UserOneResponseDto resDto = userService.updateUser(reqDto, jwtUser);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(resDto);
     }
 
     @DeleteMapping("/user")
     public ResponseEntity<Void> deleteUser(@Valid @RequestBody DeleteRequestDto reqDto, @RequestAttribute("user") User jwtUser) {
         userService.deleteUser(reqDto, jwtUser);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
