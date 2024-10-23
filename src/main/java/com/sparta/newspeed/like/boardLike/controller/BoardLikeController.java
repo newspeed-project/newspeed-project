@@ -36,6 +36,6 @@ public class BoardLikeController {
             @RequestAttribute("user") User jwtUser
     ) {
         boardLikeService.unlikeBoard(boardId, jwtUser);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.noContent().build();
     }
 }

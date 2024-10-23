@@ -41,6 +41,6 @@ public class CommentLikeController {
             @RequestAttribute("user") User jwtUser
     ) {
         commentLikeService.unlikeComment(boardId, commentId, jwtUser);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.noContent().build();
     }
 }
