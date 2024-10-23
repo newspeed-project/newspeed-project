@@ -48,7 +48,7 @@ public class BoardService {
     }
 
     @Transactional
-    public EditBoardResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto, User jwtUser) {
+    public BoardOneResponseDto editBoard(Long id, UpdateBoardRequestDto reqDto, User jwtUser) {
 
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다."));
@@ -59,7 +59,7 @@ public class BoardService {
         if (!board.getUser().getId().equals(jwtUser.getId()))
             throw new ClientRequestException("자신이 작성한 게시물만 수정 가능합니다.");
 
-        return new EditBoardResponseDto("200", "게시물 수정 완료", board);
+        return new BoardOneResponseDto("200", "게시물 수정 완료", board);
     }
 
     @Transactional
