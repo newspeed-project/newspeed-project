@@ -31,7 +31,7 @@ public class BoardService {
 
         boardRepository.save(board);
 
-        return new CreateBoardResponseDto("201", "게시물 생성 완료", board.getId());
+        return new CreateBoardResponseDto("201", "게시물 생성 완료", board);
     }
 
     public ReadBoardResponseDto getBoardById(Long id) {
