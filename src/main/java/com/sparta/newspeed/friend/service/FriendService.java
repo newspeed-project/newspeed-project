@@ -28,7 +28,10 @@ public class FriendService {
 
     public FriendDefaultResponseDto sendRequest(FriendRequestDto reqDto, User jwtUser) {
         User targetUser = findRequestUser(reqDto.getFriendId());
-
+        if (targetUser.getId().equals(jwtUser.getId())) {
+            throw new ClientRequestException("나 자신에게 친구 요청을 할 수 없습니다.");
+        }
+        checkIfDuplicated(jwtUser, targetUser);
         Friend friend = new Friend();
         friend.makeFriend(jwtUser, targetUser);
         friendRepository.save(friend);
@@ -51,6 +54,9 @@ public class FriendService {
     public FriendDefaultResponseDto acceptRequest(Long id, User jwtUser) {
         User requestUser = findRequestUser(id);
         Friend friend = findFriend(requestUser, jwtUser);
+        if (friend.getStatus() == RequestStatus.ACCEPTED) {
+            throw new ClientRequestException("이미 친구 상태입니다.");
+        }
         friend.accept();
 
         return new FriendDefaultResponseDto("200", "친구 요청 승인");
@@ -62,6 +68,7 @@ public class FriendService {
         if (friend.getStatus() == RequestStatus.ACCEPTED) {
             throw new ClientRequestException("이미 친구 상태입니다.");
         }
+        friendRepository.delete(friend);
     }
 
     public void deleteFriend(Long id, User jwtUser) {
@@ -71,6 +78,23 @@ public class FriendService {
     }
 
     // ========== 편의 메서드 ==========
+
+    private void checkIfDuplicated(User jwtUser, User targetUser) {
+        Optional<Friend> existingFriend = friendRepository.findByRequestUserAndResponseUser(jwtUser, targetUser);
+
+        if (existingFriend.isEmpty()) {
+            existingFriend = friendRepository.findByRequestUserAndResponseUser(targetUser, jwtUser);
+        }
+
+        if (existingFriend.isPresent()) {
+            Friend friend = existingFriend.get();
+            if (friend.getStatus() == RequestStatus.PENDING) {
+                throw new ClientRequestException("이미 친구 요청을 보냈습니다.");
+            } else if (friend.getStatus() == RequestStatus.ACCEPTED) {
+                throw new ClientRequestException("이미 친구 상태입니다.");
+            }
+        }
+    }
 
     private User findRequestUser(Long id) {
         return userRepository.findById(id).orElseThrow(
