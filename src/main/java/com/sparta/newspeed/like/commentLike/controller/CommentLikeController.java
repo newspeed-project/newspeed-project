@@ -16,7 +16,7 @@ public class CommentLikeController {
 
     private final CommentLikeService commentLikeService;
 
-    @PostMapping("/comments/{commentsId}/like")
+    @PostMapping("/comments/{commentId}/like")
     public ResponseEntity<CommentLikeDefaultResponseDto> likeComment(
             @PathVariable Long boardId,
             @PathVariable Long commentId,
@@ -26,7 +26,7 @@ public class CommentLikeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resDto);
     }
 
-    @GetMapping("/comments/{commentsId}/like")
+    @GetMapping("/comments/{commentId}/like")
     public ResponseEntity<CommentLikeDefaultResponseDto> getLikeBoard(
             @PathVariable Long boardId,
             @PathVariable Long commentId
@@ -35,7 +35,7 @@ public class CommentLikeController {
         return ResponseEntity.status(HttpStatus.OK).body(resDto);
     }
 
-    @DeleteMapping("/comments/{commentsId}/like")
+    @DeleteMapping("/comments/{commentId}/like")
     public ResponseEntity<Void> unlikeBoard(
             @PathVariable Long boardId,
             @PathVariable Long commentId,

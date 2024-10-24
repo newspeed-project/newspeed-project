@@ -8,4 +8,6 @@ public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
     Long countAllByBoard(Board board);
 
     void deleteByBoardAndUser(Board board, User jwtUser);
+
+    void deleteAllByBoard(Board board);
 }

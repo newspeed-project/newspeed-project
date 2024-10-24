@@ -6,7 +6,10 @@ import com.sparta.newspeed.common.exception.ClientRequestException;
 import com.sparta.newspeed.common.exception.PasswordMismatchException;
 import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.board.BoardRepository;
+import com.sparta.newspeed.domain.comment.CommentRepository;
 import com.sparta.newspeed.domain.friend.FriendRepository;
+import com.sparta.newspeed.domain.like.boardLike.BoardLikeRepository;
+import com.sparta.newspeed.domain.like.commentLike.CommentLikeRepository;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
 import com.sparta.newspeed.domain.user.UserRepository;
@@ -24,6 +27,9 @@ public class BoardService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final FriendRepository friendRepository;
+    private final CommentRepository commentRepository;
+    private final BoardLikeRepository boardLikeRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     public BoardOneResponseDto createBoard(UpdateBoardRequestDto reqDto, User jwtUser) {
@@ -83,7 +89,6 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long id, DeleteBoardRequestDto reqDto, User jwtUser) {
 
-
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("해당 ID의 게시물을 찾을 수 없습니다."));
 
@@ -91,6 +96,11 @@ public class BoardService {
             throw new ClientRequestException("자신이 작성한 게시물만 수정 가능합니다.");
 
         checkUserPassword(reqDto.getPassword(), jwtUser);
+
+        commentRepository.deleteByBoard(board);
+
+        boardLikeRepository.deleteAllByBoard(board);
+        commentLikeRepository.deleteAllByBoard(board);
 
         boardRepository.delete(board);
     }

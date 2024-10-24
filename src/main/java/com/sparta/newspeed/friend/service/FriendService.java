@@ -70,7 +70,7 @@ public class FriendService {
         friendRepository.delete(friend);
     }
 
-    // ========== 편의 메서드 ==========
+    // ========== 편의 메서드 ==========a
 
     private User findRequestUser(Long id) {
         return userRepository.findById(id).orElseThrow(
