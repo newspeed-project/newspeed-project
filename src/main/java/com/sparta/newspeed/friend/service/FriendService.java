@@ -77,7 +77,7 @@ public class FriendService {
         friendRepository.delete(friend);
     }
 
-    // ========== 편의 메서드 ==========
+    // ========== 편의 메서드 ==========a
 
     private void checkIfDuplicated(User jwtUser, User targetUser) {
         Optional<Friend> existingFriend = friendRepository.findByRequestUserAndResponseUser(jwtUser, targetUser);

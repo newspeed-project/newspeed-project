@@ -1,5 +1,6 @@
 package com.sparta.newspeed.domain.like.commentLike;
 
+import com.sparta.newspeed.domain.board.Board;
 import com.sparta.newspeed.domain.comment.Comment;
 import com.sparta.newspeed.domain.user.User;
 import jakarta.persistence.*;
@@ -21,6 +22,10 @@ public class CommentLike {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "boardId")
+    private Board board;
 
     private CommentLike(Comment comment, User user) {
         this.comment = comment;
