@@ -27,12 +27,13 @@ public class CommentLike {
     @JoinColumn(name = "boardId")
     private Board board;
 
-    private CommentLike(Comment comment, User user) {
+    private CommentLike(Comment comment, User user, Board board) {
         this.comment = comment;
         this.user = user;
+        this.board = board;
     }
 
-    public static CommentLike create(Comment comment, User jwtUser) {
-        return new CommentLike(comment, jwtUser);
+    public static CommentLike create(Comment comment, User jwtUser, Board board) {
+        return new CommentLike(comment, jwtUser, board);
     }
 }
