@@ -6,6 +6,10 @@ import com.sparta.newspeed.common.exception.ClientRequestException;
 import com.sparta.newspeed.common.exception.PasswordMismatchException;
 import com.sparta.newspeed.common.exception.PasswordSameException;
 import com.sparta.newspeed.common.exception.ResourceNotFoundException;
+import com.sparta.newspeed.domain.board.BoardRepository;
+import com.sparta.newspeed.domain.comment.CommentRepository;
+import com.sparta.newspeed.domain.friend.Friend;
+import com.sparta.newspeed.domain.friend.FriendRepository;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
 import com.sparta.newspeed.domain.user.UserRole;
@@ -25,6 +29,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final BoardRepository boardRepository;
+    private final FriendRepository friendRepository;
+    private final CommentRepository commentRepository;
 
     public UserOneResponseDto createUser(UserRequestDto userRequestDto, HttpServletResponse res) {
         // 비밀번호 암호화
@@ -94,10 +101,39 @@ public class UserService {
 
     @Transactional
     public void deleteUser(DeleteRequestDto reqDto, User jwtUser) {
+        //1. 비밀번호 검증
         checkIfPasswordMatches(jwtUser, reqDto.getPassword());
+        handleUserDeletion(jwtUser);  // 삭제 로직 호출
+
+        //2. 유저 상태를 DELETED 상태로 수정
         jwtUser.delete();      // 유저 Entity 삭제 관련 필드만 수정. 나머지 모든 데이터는 유지
         userRepository.save(jwtUser);
+
+        //3. 친구 관계의 상태 변경 (DELETED)
+        List<Friend> friends = friendRepository.findByRequestUserOrResponseUser(jwtUser, jwtUser);
+        friends.forEach(Friend::markAsDeleted);
+        friendRepository.saveAll(friends);
+
+        //4. 게시글과 댓글 삭제
+        boardRepository.deleteByUser(jwtUser);
+        commentRepository.deleteByUser(jwtUser);
     }
+
+    @Transactional
+    public void handleUserDeletion(User user) {
+        // 해당 유저가 연관된 친구 관계를 모두 조회
+        List<Friend> friends = friendRepository.findByRequestUserOrResponseUser(user, user);
+        friends.forEach(Friend::markAsDeleted); // 상태를 DELETED로 변경
+        friendRepository.saveAll(friends);
+
+        // 게시글과 댓글 삭제
+        boardRepository.deleteByUser(user);
+        commentRepository.deleteByUser(user);
+
+        // 유저 삭제
+        userRepository.delete(user);
+    }
+
 
     // ========== 편의 메서드 ==========
 

@@ -15,11 +15,11 @@ public class BoardLike {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "boardId")
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private BoardLike(Board board, User user) {

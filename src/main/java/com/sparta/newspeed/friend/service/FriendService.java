@@ -7,6 +7,8 @@ import com.sparta.newspeed.domain.friend.FriendRepository;
 import com.sparta.newspeed.domain.friend.RequestStatus;
 import com.sparta.newspeed.domain.user.User;
 import com.sparta.newspeed.domain.user.UserRepository;
+import com.sparta.newspeed.domain.comment.CommentRepository;
+import com.sparta.newspeed.domain.board.BoardRepository;
 import com.sparta.newspeed.friend.dto.FriendDefaultResponseDto;
 import com.sparta.newspeed.friend.dto.FriendListResponseDto;
 import com.sparta.newspeed.friend.dto.FriendRequestDto;
@@ -25,6 +27,8 @@ public class FriendService {
 
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
 
     public FriendDefaultResponseDto sendRequest(FriendRequestDto reqDto, User jwtUser) {
         User targetUser = findRequestUser(reqDto.getFriendId());
@@ -49,6 +53,28 @@ public class FriendService {
 
         return new FriendListResponseDto("200", "친구 목록 조회 완료", friends);
     }
+
+    @Transactional
+    public void handleUserDeletion(User user) {
+        // 요청한 사용자와 응답한 사용자 모두를 고려하여 친구 관계를 DELETED 상태로 변경
+        List<Friend> requestFriends = friendRepository.findByRequestUser(user);
+        List<Friend> responseFriends = friendRepository.findByResponseUser(user);
+
+        // DELETED 상태로 변경
+        requestFriends.forEach(Friend::markAsDeleted);
+        responseFriends.forEach(Friend::markAsDeleted);
+
+        friendRepository.saveAll(requestFriends);
+        friendRepository.saveAll(responseFriends);
+
+        // 게시글과 댓글 삭제
+        boardRepository.deleteByUser(user);
+        commentRepository.deleteByUser(user);
+
+        // 유저 삭제
+        userRepository.delete(user);
+    }
+
 
     @Transactional
     public FriendDefaultResponseDto acceptRequest(Long id, User jwtUser) {

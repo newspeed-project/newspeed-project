@@ -35,4 +35,10 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             "AND f.status = 'ACCEPTED'")
     List<Long> findAcceptedFriendIds(Long userId);
 
+    List<Friend> findByRequestUserOrResponseUser(User requestUser, User responseUser);
+
+
+    List<Friend> findByRequestUser(User user);
+    List<Friend> findByResponseUser(User user);
+
 }
