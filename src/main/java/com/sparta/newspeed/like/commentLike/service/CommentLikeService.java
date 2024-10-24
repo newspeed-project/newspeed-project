@@ -26,7 +26,7 @@ public class CommentLikeService {
         Board board = findBoardById(boardId);
         Comment comment = findCommentById(commentId);
         checkIfLikeMyself(jwtUser, comment);
-        CommentLike commentLike = CommentLike.create(comment, jwtUser);
+        CommentLike commentLike = CommentLike.create(comment, jwtUser, board);
         commentLikeRepository.save(commentLike);
         Long count = commentLikeRepository.countAllByComment(comment);
         return new CommentLikeDefaultResponseDto("201", "좋아요 등록 성공", count);
