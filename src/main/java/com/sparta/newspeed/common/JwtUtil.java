@@ -1,5 +1,7 @@
 package com.sparta.newspeed.common;
 
+import com.sparta.newspeed.common.exception.TokenUnauthorizedException;
+import com.sparta.newspeed.domain.user.UserRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -71,6 +73,7 @@ public class JwtUtil {
 
             // 토큰의 Name 값과 Value 값 전달
             Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token);
+            cookie.setPath("/");
 
             // Response 객체에 Cookie 추가
             res.addCookie(cookie);
@@ -81,12 +84,11 @@ public class JwtUtil {
 
     // 토큰에서 JWT 가져오기
     public String substringToken(String tokenValue) {
-        if (!StringUtils.hasText(tokenValue) || !tokenValue.startsWith(BEARER_PREFIX)) {
-            log.error("토큰을 찾을 수 없습니다.:");
-            throw new NullPointerException("토큰을 찾을 수 없습니다.");
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
         }
-
-        return tokenValue.substring(7);
+        log.error("토큰관련 인증 에러");
+        throw new TokenUnauthorizedException("토큰을 찾을 수 없습니다.");
     }
 
     // 토큰 검증
@@ -100,7 +102,9 @@ public class JwtUtil {
             log.error("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {           // 지원되지 않는 형식의 JWT 토큰일 시
             log.error("지원되지 않는 JWT 토큰입니다.");
-        } catch (IllegalArgumentException e) {          // 잘못된 토큰이거나 토큰이 null 또는 비어있을 때
+        /*} catch (IllegalArgumentException e) {          // 잘못된 토큰이거나 토큰이 null 또는 비어있을 때
+            log.error("잘못된 JWT 토큰입니다.");*/
+        } catch (TokenUnauthorizedException e) {
             log.error("잘못된 JWT 토큰입니다.");
         }
         return false;
@@ -112,19 +116,21 @@ public class JwtUtil {
     }
 
     // HttpServletRequest에서 Cookie Value: JWT 가져오기
-    public Optional<String> getTokenFromRequest(HttpServletRequest req) {
+    public String getTokenFromRequest(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
-                        return Optional.ofNullable(URLDecoder.decode(cookie.getValue(), "UTF-8"));
+                        return URLDecoder.decode(cookie.getValue(), "UTF-8");
                     } catch (UnsupportedEncodingException e) {
-                        return Optional.empty();
+                        return null;
                     }
                 }
             }
         }
-        return Optional.empty();
+        return null;
     }
+
+
 }
